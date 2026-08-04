@@ -482,6 +482,7 @@
     <div class="kpi"><div class="kpi-label">Universe</div><div class="kpi-val neu" id="kpi-univ">—</div></div>
     <div class="kpi k-up"><div class="kpi-label">Fresh Breakouts</div><div class="kpi-val up" id="kpi-bo">—</div></div>
     <div class="kpi k-down"><div class="kpi-label">Fresh Breakdowns</div><div class="kpi-val down" id="kpi-bd">—</div></div>
+    <div class="kpi k-up"><div class="kpi-label">Snapbacks</div><div class="kpi-val up" id="kpi-snap">—</div></div>
     <div class="kpi k-info"><div class="kpi-label">RVOL Movers</div><div class="kpi-val neu" id="kpi-rvol">—</div></div>
     <div class="kpi k-up"><div class="kpi-label">Bullish EPs · 6M</div><div class="kpi-val up" id="kpi-bep">—</div></div>
     <div class="kpi k-info"><div class="kpi-label">VCP Setups</div><div class="kpi-val neu" id="kpi-vcp">—</div></div>
@@ -494,6 +495,7 @@
   <ul class="nav tabbar" id="mainTabs" role="tablist">
     <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-breadth" id="breadth-tab">📊 Breadth</a></li>
     <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-breakouts">🚀 Fresh Breakouts</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-snapback">🪝 Snapback</a></li>
     <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-rvol">📶 RVOL Daily</a></li>
     <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-ep">⚡ Episodic Pivot</a></li>
     <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-vcp">🎯 VCP</a></li>
@@ -557,6 +559,37 @@
         <div class="p-1"><table id="tbl-breakouts" class="table mb-0" style="width:100%">
           <thead><tr><th>Symbol</th><th>Type</th><th>Close</th><th>Chg %</th><th>Volume</th><th>F&O</th></tr></thead>
           <tbody id="bo-body"></tbody></table></div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tab-snapback">
+      <div class="manas-legend">
+        <strong>Snapback</strong> — F&amp;O stocks that undercut a fresh <em>1M / 3M / 6M / 1Y low</em>
+        within the last 5 sessions and snapped back: either a <em>same-day</em> reversal bar
+        (close in the top 35% of the range) or a close back <em>above the broken low level</em>
+        within 1–2 days. Score: +1 window ≥ 3M · +1 same-day bar · +1 flush volume ≥ 1.5× ·
+        +1 snap volume ≥ 1.5×.
+      </div>
+      <div class="d-flex gap-2 mb-3 flex-wrap">
+        <select id="sn-win-filter" class="control" onchange="filterSnapback()">
+          <option value="">All Windows</option><option value="1Y">1Y</option>
+          <option value="6M">6M</option><option value="3M">3M</option><option value="1M">1M</option>
+        </select>
+        <select id="sn-type-filter" class="control" onchange="filterSnapback()">
+          <option value="">All Types</option><option value="SAME_DAY">Same-day reversal</option>
+          <option value="D1">Next-day reclaim</option><option value="D2">2-day reclaim</option>
+        </select>
+        <select id="sn-score-filter" class="control" onchange="filterSnapback()">
+          <option value="">Any Score</option><option value="2">Score ≥ 2</option>
+          <option value="3">Score ≥ 3</option><option value="4">Score 4</option>
+        </select>
+      </div>
+      <div class="panel"><div class="panel-head"><h2>Undercut &amp; Rally — F&amp;O (last 5 sessions)</h2><span class="count" id="sn-count"></span>
+        <button class="control copy-btn" onclick="copyTableSymbols('tbl-snapback')" title="Copy filtered symbols as NSE:SYMBOL — paste into a TradingView watchlist">⧉ Copy</button></div>
+        <div class="p-1"><table id="tbl-snapback" class="table mb-0" style="width:100%">
+          <thead><tr><th>Symbol</th><th>Window</th><th>Low Date</th><th>Low</th><th>Broken Lvl</th>
+            <th>Snap</th><th>Snap Close</th><th>Last</th><th>% off Low</th><th>Flush Vol×</th><th>Snap Vol×</th><th>Score</th></tr></thead>
+          <tbody id="sn-body"></tbody></table></div>
       </div>
     </div>
 
@@ -924,7 +957,7 @@ async function loadAll(){
   const btn = document.getElementById("refresh-btn"); btn.classList.add("spin");
   toast("Refreshing…");
   await loadFNO();   // hourly + F&O filters need the F&O symbol list first
-  await Promise.all([loadIndices(), loadBreadth(), loadBreakouts(), loadRVOL(), loadHourly(), loadEP(), loadVCP(), loadVCPPro(), loadManas(), loadMove(), loadSentiment(), loadSectors(), loadFNOSectors()]);
+  await Promise.all([loadIndices(), loadBreadth(), loadBreakouts(), loadSnapback(), loadRVOL(), loadHourly(), loadEP(), loadVCP(), loadVCPPro(), loadManas(), loadMove(), loadSentiment(), loadSectors(), loadFNOSectors()]);
   if(hourlyTimer) clearInterval(hourlyTimer);
   hourlyTimer = setInterval(loadHourly, 300000);   // refresh hourly feed every 5 min
   if(fnoStocks.length){
@@ -1134,6 +1167,47 @@ function filterBreakouts(){
   if(t) d=d.filter(r=>r.breakout_type.includes(t));
   if(f==="fno") d=d.filter(r=>fnoSymbols.has(r.symbol));
   renderBreakouts(d);
+}
+
+// ── Snapback: undercut & rally (F&O, last 5 sessions) ──
+let snapData = [], dtSnap = null;
+async function loadSnapback(){
+  const { data, error } = await sb.from("scanner_snapback").select("*")
+    .order("score",{ascending:false}).order("low_date",{ascending:false});
+  if(error||!data) return;
+  snapData = data;
+  setText("kpi-snap", data.length, "up");
+  renderSnapback(data);
+}
+function renderSnapback(data){
+  if(dtSnap){ dtSnap.destroy(); dtSnap=null; }
+  document.getElementById("sn-count").textContent =
+    data.length + " snapbacks · fresh lows reclaimed within 2 sessions";
+  document.getElementById("sn-body").innerHTML = data.map(r=>{
+    const sd = r.snap_type==="SAME_DAY";
+    return `<tr><td>${tk(r.symbol)}</td>
+      <td><span class="tag ${["6M","1Y"].includes(r.low_window)?'tag-low':''}">${r.low_window} LOW</span></td>
+      <td>${fmtScanDate(r.low_date)}</td>
+      <td>${fmt(r.extreme_low,2)}</td>
+      <td>${fmt(r.broken_level,2)}</td>
+      <td><span class="tag ${sd?'tag-high':''}">${sd?'SAME DAY':r.snap_type}</span></td>
+      <td>${fmt(r.snap_close,2)}</td>
+      <td>${fmt(r.last_close,2)}</td>
+      <td class="${r.pct_off_low>=0?'pos':'neg'}">${fmt(r.pct_off_low,1)}%</td>
+      <td>${r.flush_vol_ratio==null?'—':fmt(r.flush_vol_ratio,1)+'×'}</td>
+      <td>${r.snap_vol_ratio==null?'—':fmt(r.snap_vol_ratio,1)+'×'}</td>
+      <td><b>${r.score}</b>/4</td></tr>`;}).join("");
+  dtSnap = $("#tbl-snapback").DataTable(dtOpts({ order:[] }));
+}
+function filterSnapback(){
+  const w=document.getElementById("sn-win-filter").value,
+        t=document.getElementById("sn-type-filter").value,
+        s=document.getElementById("sn-score-filter").value;
+  let d=snapData;
+  if(w) d=d.filter(r=>r.low_window===w);
+  if(t) d=d.filter(r=>r.snap_type===t);
+  if(s) d=d.filter(r=>r.score>=+s);
+  renderSnapback(d);
 }
 
 let epData = [];
@@ -1529,6 +1603,8 @@ function buildScanHits(){
       r.status==="FIRED" ? (r.signal_date||r.setup_date) : r.setup_date, "VCP Pro: "+r.status); });
   manasData.forEach(r=>{ if(!r.setup_ready) return;
     add(r.symbol, "MNS", "h-acc", r.run_date, "Manas setup-ready · score "+r.setup_score+"/5"); });
+  snapData.forEach(r=>add(r.symbol, "SNP", "h-up", r.snap_date,
+    "Snapback: "+r.low_window+" low, "+(r.snap_type==="SAME_DAY"?"same-day reversal":r.snap_type+" reclaim")+" · score "+r.score+"/4"));
   rvolData.forEach(r=>{ if((r.rvol??0) < 1.5 || !r.chg_pct) return;
     const up = r.chg_pct > 0;
     add(r.symbol, up?"RV▲":"RV▼", up?"h-up":"h-dn", r.run_date,
