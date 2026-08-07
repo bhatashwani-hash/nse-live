@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#160829">
+<meta name="theme-color" content="#ffffff">
 <title>Bazaar Baadshah 🎬</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,32 +11,34 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
-    --bg1:#1c0a33; --bg2:#0e051d; --card:rgba(255,255,255,.055); --card2:rgba(255,255,255,.09);
-    --line:rgba(255,200,55,.18); --text:#fdf6ff; --muted:#c9b8e8; --faint:#8d7bb5;
-    --pink:#ff2e88; --gold:#ffc837; --orange:#ff8a3d; --up:#2eec8b; --dn:#ff4d5e; --cyan:#43d9ff;
+    --bg:#ffffff; --card:#ffffff; --soft:#f7f5fc; --line:#ece7f6;
+    --text:#241a3d; --muted:#6f6590; --faint:#a49bc0;
+    --pink:#f43f8e; --gold:#f5a623; --orange:#fb7c3c;
+    --up:#0ca86a; --upbg:#e9f9f1; --dn:#e6395a; --dnbg:#fdeef2;
+    --cyan:#0e97d5; --violet:#7c5cfc;
     --mono:'JetBrains Mono',ui-monospace,monospace;
   }
   *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-  html,body{ background:var(--bg2); }
+  html,body{ background:var(--bg); }
   body{ color:var(--text); font-family:'Baloo 2',system-ui,sans-serif; font-size:14px;
-    padding-bottom:calc(80px + env(safe-area-inset-bottom));
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));
     background:
-      radial-gradient(800px 400px at 90% -8%, rgba(255,46,136,.16), transparent 60%),
-      radial-gradient(700px 400px at 0% 30%, rgba(255,200,55,.08), transparent 55%),
-      radial-gradient(600px 500px at 100% 100%, rgba(67,217,255,.08), transparent 55%),
-      linear-gradient(180deg,var(--bg1),var(--bg2) 60%); }
+      radial-gradient(700px 360px at 92% -6%, rgba(244,63,142,.07), transparent 60%),
+      radial-gradient(650px 380px at -5% 22%, rgba(245,166,35,.07), transparent 55%),
+      radial-gradient(600px 420px at 100% 95%, rgba(124,92,252,.06), transparent 55%),
+      var(--bg); }
 
   header{ position:sticky; top:0; z-index:40;
-    background:rgba(18,7,36,.82); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    background:rgba(255,255,255,.85); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
     border-bottom:1px solid var(--line);
     padding:calc(.7rem + env(safe-area-inset-top)) 1rem .55rem; }
   .hrow{ display:flex; align-items:center; gap:.6rem; }
-  .logo{ font-size:22px; filter:drop-shadow(0 0 8px rgba(255,200,55,.6)); }
+  .logo{ font-size:22px; }
   h1{ font-size:1.15rem; font-weight:800; letter-spacing:.3px;
-    background:linear-gradient(90deg,var(--gold),var(--pink),var(--orange));
+    background:linear-gradient(90deg,var(--orange),var(--pink),var(--violet));
     -webkit-background-clip:text; background-clip:text; color:transparent; }
   .reload{ margin-left:auto; width:34px; height:34px; border-radius:12px; cursor:pointer;
-    background:var(--card2); border:1px solid var(--line); color:var(--gold); font-size:15px; }
+    background:var(--soft); border:1px solid var(--line); color:var(--pink); font-size:15px; }
   .tagline{ font-size:.66rem; color:var(--faint); margin-top:.1rem; font-style:italic; }
   .stat{ margin-top:.3rem; font-family:var(--mono); font-size:.64rem; color:var(--muted); }
   .stat .ok{ color:var(--up); }
@@ -46,71 +48,76 @@
   @keyframes pop{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none;} }
 
   /* ── Nifty mood hero ── */
-  .mood{ border-radius:20px; padding:1rem 1.05rem .9rem; margin-bottom:.8rem; position:relative; overflow:hidden;
-    border:1.5px solid; box-shadow:0 10px 34px rgba(0,0,0,.45); }
-  .mood.tezi{ border-color:rgba(46,236,139,.5);
-    background:linear-gradient(135deg, rgba(46,236,139,.16), rgba(255,200,55,.10) 55%, transparent); }
-  .mood.mandi{ border-color:rgba(255,77,94,.5);
-    background:linear-gradient(135deg, rgba(255,77,94,.18), rgba(255,46,136,.10) 55%, transparent); }
-  .mood.savdhaan{ border-color:rgba(255,200,55,.5);
-    background:linear-gradient(135deg, rgba(255,200,55,.15), rgba(255,138,61,.10) 55%, transparent); }
+  .mood{ border-radius:20px; padding:1rem 1.05rem .9rem; margin-bottom:.85rem;
+    border:1.5px solid; box-shadow:0 8px 26px rgba(36,26,61,.10); }
+  .mood.tezi{ border-color:rgba(12,168,106,.35);
+    background:linear-gradient(135deg,#e9f9f1,#fdf7e7 60%,#fff); }
+  .mood.mandi{ border-color:rgba(230,57,90,.35);
+    background:linear-gradient(135deg,#fdeef2,#fff0f7 60%,#fff); }
+  .mood.savdhaan{ border-color:rgba(245,166,35,.4);
+    background:linear-gradient(135deg,#fdf4e3,#fff7ef 60%,#fff); }
   .mood-top{ display:flex; align-items:center; gap:.7rem; }
-  .mood-emoji{ font-size:38px; filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)); }
+  .mood-emoji{ font-size:38px; }
   .mood-name{ font-size:1.5rem; font-weight:800; letter-spacing:1px; line-height:1; }
-  .mood.tezi .mood-name{ color:var(--up); text-shadow:0 0 18px rgba(46,236,139,.5); }
-  .mood.mandi .mood-name{ color:var(--dn); text-shadow:0 0 18px rgba(255,77,94,.5); }
-  .mood.savdhaan .mood-name{ color:var(--gold); text-shadow:0 0 18px rgba(255,200,55,.5); }
-  .mood-line{ font-size:.74rem; color:var(--muted); margin-top:.1rem; }
+  .mood.tezi .mood-name{ color:var(--up); }
+  .mood.mandi .mood-name{ color:var(--dn); }
+  .mood.savdhaan .mood-name{ color:#d18a08; }
+  .mood-line{ font-size:.74rem; color:var(--muted); margin-top:.15rem; }
   .mood-px{ margin-left:auto; text-align:right; }
   .mood-px .v{ font-family:var(--mono); font-size:1.25rem; font-weight:700; }
   .mood-px .c{ font-family:var(--mono); font-size:.8rem; font-weight:700; }
   .mas{ display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.75rem; }
   .ma{ font-family:var(--mono); font-size:.66rem; font-weight:700; padding:.18rem .5rem;
     border-radius:999px; border:1px solid; }
-  .ma.a{ color:var(--up); border-color:rgba(46,236,139,.4); background:rgba(46,236,139,.1); }
-  .ma.b{ color:var(--dn); border-color:rgba(255,77,94,.4); background:rgba(255,77,94,.1); }
+  .ma.a{ color:var(--up); border-color:rgba(12,168,106,.3); background:var(--upbg); }
+  .ma.b{ color:var(--dn); border-color:rgba(230,57,90,.3); background:var(--dnbg); }
 
   /* ── sector strength ── */
   .sec-head{ display:flex; align-items:center; gap:.5rem; margin:.2rem .1rem .55rem; }
   .sec-title{ font-weight:800; font-size:1rem; }
-  .seg{ margin-left:auto; display:flex; background:var(--card); border:1px solid var(--line);
+  .seg{ margin-left:auto; display:flex; background:var(--soft); border:1px solid var(--line);
     border-radius:999px; padding:.18rem; }
   .seg button{ border:none; background:none; color:var(--muted); font-family:'Baloo 2';
     font-weight:700; font-size:.72rem; padding:.3rem .7rem; border-radius:999px; cursor:pointer; }
-  .seg button.on{ color:#2b1200; background:linear-gradient(135deg,var(--gold),var(--orange));
-    box-shadow:0 3px 10px rgba(255,200,55,.4); }
-  .srow{ background:var(--card); border:1px solid rgba(255,255,255,.07); border-radius:13px;
-    padding:.5rem .7rem .45rem; margin-bottom:.4rem; }
+  .seg button.on{ color:#fff; background:linear-gradient(135deg,var(--pink),var(--orange));
+    box-shadow:0 3px 10px rgba(244,63,142,.3); }
+  .srow{ background:var(--card); border:1px solid var(--line); border-radius:13px;
+    padding:.5rem .7rem .45rem; margin-bottom:.4rem; box-shadow:0 2px 8px rgba(36,26,61,.05); }
   .sr1{ display:flex; align-items:baseline; gap:.5rem; }
   .sname{ font-weight:700; font-size:.82rem; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .sret{ font-family:var(--mono); font-weight:700; font-size:.88rem; }
   .scnt{ font-family:var(--mono); font-size:.62rem; color:var(--faint); }
-  .sbar{ height:6px; border-radius:4px; background:rgba(255,255,255,.07); margin-top:.35rem; overflow:hidden; display:flex; }
+  .sbar{ height:6px; border-radius:4px; background:var(--soft); margin-top:.35rem; overflow:hidden; display:flex; }
   .sbar i{ display:block; height:100%; border-radius:4px; }
-  .pos{ color:var(--up); } .neg{ color:var(--dn); } .amb{ color:var(--gold); }
+  .pos{ color:var(--up); } .neg{ color:var(--dn); } .amb{ color:#d18a08; }
 
   /* ── reco cards ── */
-  .legend{ color:var(--faint); font-size:.7rem; line-height:1.5; padding:.1rem .2rem .6rem; }
-  .legend b{ color:var(--muted); }
-  .row{ background:var(--card); border:1px solid rgba(255,255,255,.08); border-radius:16px;
+  .runline{ display:flex; align-items:center; gap:.4rem; color:var(--muted);
+    font-size:.72rem; font-weight:700; padding:.1rem .2rem .6rem; }
+  .runline .pill{ font-family:var(--mono); font-size:.66rem; font-weight:700; color:var(--violet);
+    background:rgba(124,92,252,.1); border:1px solid rgba(124,92,252,.25);
+    border-radius:999px; padding:.14rem .55rem; }
+  .row{ background:var(--card); border:1px solid var(--line); border-radius:16px;
     padding:.75rem .85rem .65rem; margin-bottom:.6rem; cursor:pointer;
-    box-shadow:0 4px 16px rgba(0,0,0,.3); }
-  .row:active{ transform:scale(.985); background:var(--card2); }
+    box-shadow:0 4px 14px rgba(36,26,61,.07); }
+  .row:active{ transform:scale(.985); background:var(--soft); }
   .r1{ display:flex; align-items:center; gap:.5rem; }
   .sym{ font-weight:800; font-size:1.05rem; letter-spacing:.2px; flex:1;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .big{ font-family:var(--mono); font-weight:700; font-size:.95rem; }
   .tag{ font-size:.6rem; font-weight:800; letter-spacing:.5px; padding:.16rem .5rem;
     border-radius:999px; white-space:nowrap; }
-  .tag.gold{ color:#2b1200; background:linear-gradient(135deg,var(--gold),var(--orange)); }
-  .tag.pink{ color:#fff; background:linear-gradient(135deg,var(--pink),#b3128f); }
-  .tag.dim{ color:var(--muted); background:var(--card2); border:1px solid rgba(255,255,255,.1); }
+  .tag.gold{ color:#5c3a00; background:linear-gradient(135deg,#ffe9b8,#ffd98a); }
+  .tag.pink{ color:#fff; background:linear-gradient(135deg,var(--pink),var(--violet)); }
+  .tag.dim{ color:var(--muted); background:var(--soft); border:1px solid var(--line); }
   .trade{ display:flex; gap:.4rem; margin-top:.55rem; }
-  .tbox{ flex:1; border-radius:11px; padding:.4rem .2rem .35rem; text-align:center;
-    border:1px solid rgba(255,255,255,.08); background:rgba(0,0,0,.18); }
-  .tbox .k{ font-size:.58rem; font-weight:700; letter-spacing:.6px; color:var(--faint); text-transform:uppercase; }
+  .tbox{ flex:1; border-radius:11px; padding:.4rem .2rem .35rem; text-align:center; border:1px solid; }
+  .tbox .k{ font-size:.58rem; font-weight:700; letter-spacing:.6px; color:var(--muted); text-transform:uppercase; }
   .tbox .v{ font-family:var(--mono); font-weight:700; font-size:.85rem; margin-top:.05rem; }
-  .tbox.entry .v{ color:var(--cyan); } .tbox.sl .v{ color:var(--dn); } .tbox.tgt .v{ color:var(--up); }
+  .tbox.entry{ background:#eef7fd; border-color:#d3eaf8; } .tbox.entry .v{ color:var(--cyan); }
+  .tbox.sl{ background:var(--dnbg); border-color:#f8d3dd; } .tbox.sl .v{ color:var(--dn); }
+  .tbox.tgt{ background:var(--upbg); border-color:#cdeeda; } .tbox.tgt .v{ color:var(--up); }
+  .tbox.risk{ background:#fdf4e3; border-color:#f5e3bd; } .tbox.risk .v{ color:#d18a08; }
   .r3{ font-family:var(--mono); font-size:.68rem; color:var(--muted); margin-top:.45rem; }
   .r3 b{ color:var(--text); font-weight:600; }
   .empty{ color:var(--faint); text-align:center; padding:3.5rem 1rem; font-size:.8rem; }
@@ -118,14 +125,14 @@
 
   nav{ position:fixed; left:.8rem; right:.8rem; bottom:calc(.8rem + env(safe-area-inset-bottom));
     z-index:40; display:flex; gap:.25rem; padding:.32rem;
-    background:rgba(24,10,44,.92); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
-    border:1px solid var(--line); border-radius:18px; box-shadow:0 12px 36px rgba(0,0,0,.55); }
+    background:rgba(255,255,255,.92); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--line); border-radius:18px; box-shadow:0 10px 30px rgba(36,26,61,.16); }
   nav button{ flex:1; background:none; border:none; border-radius:13px; cursor:pointer;
     color:var(--muted); font-family:'Baloo 2'; font-size:.74rem; font-weight:800; padding:.62rem 0; line-height:1.25; }
   nav button small{ display:block; font-size:.56rem; font-weight:600; color:var(--faint); }
-  nav button.on{ color:#2b0a18; background:linear-gradient(135deg,var(--gold),var(--pink));
-    box-shadow:0 5px 16px rgba(255,46,136,.4); }
-  nav button.on small{ color:rgba(43,10,24,.7); }
+  nav button.on{ color:#fff; background:linear-gradient(135deg,var(--pink),var(--orange));
+    box-shadow:0 5px 16px rgba(244,63,142,.35); }
+  nav button.on small{ color:rgba(255,255,255,.8); }
 </style>
 </head>
 <body>
@@ -159,16 +166,14 @@
 
   <!-- ── Chupa Rustam (VCP recos) ── -->
   <div class="pane" id="p-vcp">
-    <div class="legend"><b>🕵️ Chupa Rustam</b> — F&amp;O VCP coils: 3-month sprint ≥25%, ab 15-din se chup-chaap tight range mein.
-      <b>Entry</b> = breakout above the 15-day high · <b>Bachao (SL)</b> = 15-day low. Tap = chart.</div>
+    <div class="runline">🕵️ Chupa Rustam <span class="pill" id="vcp-date">📅 —</span></div>
     <div id="l-vcp" class="empty">Loading…</div>
     <div class="disclaimer">Yeh recos hain, guarantee nahi — apna risk khud sambhalo 🙏</div>
   </div>
 
   <!-- ── Rocket Singh (10% movers) ── -->
   <div class="pane" id="p-move">
-    <div class="legend"><b>🚀 Rocket Singh</b> — F&amp;O ignition candidates loaded for a +10% blast.
-      <b>Entry</b> above trigger · <b>Jackpot</b> = target · <b>Bachao (SL)</b> = stop. READY = full paisa-vasool setup.</div>
+    <div class="runline">🚀 Rocket Singh <span class="pill" id="move-date">📅 —</span></div>
     <div id="l-move" class="empty">Loading…</div>
     <div class="disclaimer">Market hai bhai, Rocket bhi kabhi kabhi flop hota hai 🙏</div>
   </div>
@@ -188,6 +193,8 @@ const sb = supabase.createClient(SB_URL, SB_KEY);
 const fmt=(v,d=2)=>v==null?"—":Number(v).toLocaleString("en-IN",{minimumFractionDigits:d,maximumFractionDigits:d});
 const sgn=(v,d=1)=>v==null?"—":(v>=0?"+":"")+fmt(v,d)+"%";
 const cls=v=>(v??0)>=0?"pos":"neg";
+const dt=s=>{ if(!s) return "—"; const d=new Date(s);
+  return isNaN(d)?"—":d.toLocaleDateString("en-IN",{day:"numeric",month:"short"}); };
 
 function show(p){
   document.querySelectorAll(".pane").forEach(e=>e.classList.toggle("on", e.id==="p-"+p));
@@ -279,16 +286,17 @@ function renderSectors(){
         <span class="sret ${up?'pos':'neg'}">${sgn(v)}</span>
       </div>
       <div class="sbar">${up
-        ?`<i style="width:${w}%;margin-left:auto;order:2;background:linear-gradient(90deg,rgba(46,236,139,.35),var(--up))"></i><i style="width:${100-w}%"></i>`
-        :`<i style="width:${w}%;background:linear-gradient(90deg,var(--dn),rgba(255,77,94,.35))"></i>`}</div>
+        ?`<i style="width:${w}%;margin-left:auto;order:2;background:linear-gradient(90deg,#8fe6bd,var(--up))"></i><i style="width:${100-w}%"></i>`
+        :`<i style="width:${w}%;background:linear-gradient(90deg,var(--dn),#f6a9ba)"></i>`}</div>
     </div>`;}).join("");
 }
 
-/* ── Chupa Rustam: VCP recos with Entry / SL ── */
+/* ── Chupa Rustam: VCP recos with Entry / SL / trigger date ── */
 async function loadVCP(){
   const d0=await latestDate("scanner_vcp");
   const { data:raw } = await sb.from("scanner_vcp").select("*").eq("run_date",d0).order("range_15d_pct");
   const el=document.getElementById("l-vcp");
+  document.getElementById("vcp-date").textContent="📅 trigger "+dt(d0);
   const data=(raw||[]).filter(r=>fno.has(r.symbol));
   if(!data.length){ el.innerHTML='<div class="empty">Aaj koi Rustam nahi mila 🤷</div>'; return 0; }
   el.innerHTML=data.map(r=>{
@@ -303,20 +311,21 @@ async function loadVCP(){
       <div class="trade">
         <div class="tbox entry"><div class="k">🎯 Entry ></div><div class="v">${fmt(entry,1)}</div></div>
         <div class="tbox sl"><div class="k">🛑 Bachao (SL)</div><div class="v">${fmt(slv,1)}</div></div>
-        <div class="tbox"><div class="k">⚖️ Risk</div><div class="v amb">${fmt(risk,1)}%</div></div>
+        <div class="tbox risk"><div class="k">⚖️ Risk</div><div class="v">${fmt(risk,1)}%</div></div>
       </div>
-      <div class="r3">abhi <b>${fmt(r.close,1)}</b> pe hai · 15-din ka dayra ${fmt(slv,1)} – ${fmt(entry,1)}</div>
+      <div class="r3">📅 <b>${dt(d0)}</b> · abhi <b>${fmt(r.close,1)}</b> pe hai · 15-din ka dayra ${fmt(slv,1)} – ${fmt(entry,1)}</div>
     </div>`;}).join("");
   return data.length;
 }
 
-/* ── Rocket Singh: 10% movers with trigger / target / SL ── */
+/* ── Rocket Singh: 10% movers with trigger / target / SL / trigger date ── */
 async function loadMove(){
   const { data } = await sb.from("scanner_move_alerts").select("*")
     .order("run_date",{ascending:false}).order("score",{ascending:false}).limit(500);
   const el=document.getElementById("l-move");
   if(!data||!data.length){ el.innerHTML='<div class="empty">Launchpad khaali hai 🚀</div>'; return 0; }
   const latest=data[0].run_date;
+  document.getElementById("move-date").textContent="📅 trigger "+dt(latest);
   const rows=data.filter(r=>r.run_date===latest && fno.has(r.symbol));
   if(!rows.length){ el.innerHTML='<div class="empty">Aaj F&O mein koi rocket nahi 🤷</div>'; return 0; }
   el.innerHTML=rows.map(r=>`<div class="row" data-sym="${r.symbol}">
@@ -331,7 +340,7 @@ async function loadMove(){
         <div class="tbox tgt"><div class="k">💰 Jackpot</div><div class="v">${fmt(r.target_price,1)}</div></div>
         <div class="tbox sl"><div class="k">🛑 Bachao (SL)</div><div class="v">${fmt(r.stop_price,1)}</div></div>
       </div>
-      <div class="r3">abhi <b>${fmt(r.close,1)}</b> · rvol <b>${fmt(r.rvol,1)}×</b> · ATR ${fmt(r.atr_typ_pct,1)}%</div>
+      <div class="r3">📅 <b>${dt(r.run_date)}</b> · abhi <b>${fmt(r.close,1)}</b> · rvol <b>${fmt(r.rvol,1)}×</b> · ATR ${fmt(r.atr_typ_pct,1)}%</div>
     </div>`).join("");
   return rows.length;
 }
