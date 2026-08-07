@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#160829">
+<title>Bazaar Baadshah 🎬</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --bg1:#1c0a33; --bg2:#0e051d; --card:rgba(255,255,255,.055); --card2:rgba(255,255,255,.09);
+    --line:rgba(255,200,55,.18); --text:#fdf6ff; --muted:#c9b8e8; --faint:#8d7bb5;
+    --pink:#ff2e88; --gold:#ffc837; --orange:#ff8a3d; --up:#2eec8b; --dn:#ff4d5e; --cyan:#43d9ff;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  html,body{ background:var(--bg2); }
+  body{ color:var(--text); font-family:'Baloo 2',system-ui,sans-serif; font-size:14px;
+    padding-bottom:calc(80px + env(safe-area-inset-bottom));
+    background:
+      radial-gradient(800px 400px at 90% -8%, rgba(255,46,136,.16), transparent 60%),
+      radial-gradient(700px 400px at 0% 30%, rgba(255,200,55,.08), transparent 55%),
+      radial-gradient(600px 500px at 100% 100%, rgba(67,217,255,.08), transparent 55%),
+      linear-gradient(180deg,var(--bg1),var(--bg2) 60%); }
+
+  header{ position:sticky; top:0; z-index:40;
+    background:rgba(18,7,36,.82); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+    padding:calc(.7rem + env(safe-area-inset-top)) 1rem .55rem; }
+  .hrow{ display:flex; align-items:center; gap:.6rem; }
+  .logo{ font-size:22px; filter:drop-shadow(0 0 8px rgba(255,200,55,.6)); }
+  h1{ font-size:1.15rem; font-weight:800; letter-spacing:.3px;
+    background:linear-gradient(90deg,var(--gold),var(--pink),var(--orange));
+    -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .reload{ margin-left:auto; width:34px; height:34px; border-radius:12px; cursor:pointer;
+    background:var(--card2); border:1px solid var(--line); color:var(--gold); font-size:15px; }
+  .tagline{ font-size:.66rem; color:var(--faint); margin-top:.1rem; font-style:italic; }
+  .stat{ margin-top:.3rem; font-family:var(--mono); font-size:.64rem; color:var(--muted); }
+  .stat .ok{ color:var(--up); }
+
+  main{ padding:.8rem .8rem 1rem; }
+  .pane{ display:none; } .pane.on{ display:block; animation:pop .2s ease; }
+  @keyframes pop{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none;} }
+
+  /* ── Nifty mood hero ── */
+  .mood{ border-radius:20px; padding:1rem 1.05rem .9rem; margin-bottom:.8rem; position:relative; overflow:hidden;
+    border:1.5px solid; box-shadow:0 10px 34px rgba(0,0,0,.45); }
+  .mood.tezi{ border-color:rgba(46,236,139,.5);
+    background:linear-gradient(135deg, rgba(46,236,139,.16), rgba(255,200,55,.10) 55%, transparent); }
+  .mood.mandi{ border-color:rgba(255,77,94,.5);
+    background:linear-gradient(135deg, rgba(255,77,94,.18), rgba(255,46,136,.10) 55%, transparent); }
+  .mood.savdhaan{ border-color:rgba(255,200,55,.5);
+    background:linear-gradient(135deg, rgba(255,200,55,.15), rgba(255,138,61,.10) 55%, transparent); }
+  .mood-top{ display:flex; align-items:center; gap:.7rem; }
+  .mood-emoji{ font-size:38px; filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)); }
+  .mood-name{ font-size:1.5rem; font-weight:800; letter-spacing:1px; line-height:1; }
+  .mood.tezi .mood-name{ color:var(--up); text-shadow:0 0 18px rgba(46,236,139,.5); }
+  .mood.mandi .mood-name{ color:var(--dn); text-shadow:0 0 18px rgba(255,77,94,.5); }
+  .mood.savdhaan .mood-name{ color:var(--gold); text-shadow:0 0 18px rgba(255,200,55,.5); }
+  .mood-line{ font-size:.74rem; color:var(--muted); margin-top:.1rem; }
+  .mood-px{ margin-left:auto; text-align:right; }
+  .mood-px .v{ font-family:var(--mono); font-size:1.25rem; font-weight:700; }
+  .mood-px .c{ font-family:var(--mono); font-size:.8rem; font-weight:700; }
+  .mas{ display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.75rem; }
+  .ma{ font-family:var(--mono); font-size:.66rem; font-weight:700; padding:.18rem .5rem;
+    border-radius:999px; border:1px solid; }
+  .ma.a{ color:var(--up); border-color:rgba(46,236,139,.4); background:rgba(46,236,139,.1); }
+  .ma.b{ color:var(--dn); border-color:rgba(255,77,94,.4); background:rgba(255,77,94,.1); }
+
+  /* ── sector strength ── */
+  .sec-head{ display:flex; align-items:center; gap:.5rem; margin:.2rem .1rem .55rem; }
+  .sec-title{ font-weight:800; font-size:1rem; }
+  .seg{ margin-left:auto; display:flex; background:var(--card); border:1px solid var(--line);
+    border-radius:999px; padding:.18rem; }
+  .seg button{ border:none; background:none; color:var(--muted); font-family:'Baloo 2';
+    font-weight:700; font-size:.72rem; padding:.3rem .7rem; border-radius:999px; cursor:pointer; }
+  .seg button.on{ color:#2b1200; background:linear-gradient(135deg,var(--gold),var(--orange));
+    box-shadow:0 3px 10px rgba(255,200,55,.4); }
+  .srow{ background:var(--card); border:1px solid rgba(255,255,255,.07); border-radius:13px;
+    padding:.5rem .7rem .45rem; margin-bottom:.4rem; }
+  .sr1{ display:flex; align-items:baseline; gap:.5rem; }
+  .sname{ font-weight:700; font-size:.82rem; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .sret{ font-family:var(--mono); font-weight:700; font-size:.88rem; }
+  .scnt{ font-family:var(--mono); font-size:.62rem; color:var(--faint); }
+  .sbar{ height:6px; border-radius:4px; background:rgba(255,255,255,.07); margin-top:.35rem; overflow:hidden; display:flex; }
+  .sbar i{ display:block; height:100%; border-radius:4px; }
+  .pos{ color:var(--up); } .neg{ color:var(--dn); } .amb{ color:var(--gold); }
+
+  /* ── reco cards ── */
+  .legend{ color:var(--faint); font-size:.7rem; line-height:1.5; padding:.1rem .2rem .6rem; }
+  .legend b{ color:var(--muted); }
+  .row{ background:var(--card); border:1px solid rgba(255,255,255,.08); border-radius:16px;
+    padding:.75rem .85rem .65rem; margin-bottom:.6rem; cursor:pointer;
+    box-shadow:0 4px 16px rgba(0,0,0,.3); }
+  .row:active{ transform:scale(.985); background:var(--card2); }
+  .r1{ display:flex; align-items:center; gap:.5rem; }
+  .sym{ font-weight:800; font-size:1.05rem; letter-spacing:.2px; flex:1;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .big{ font-family:var(--mono); font-weight:700; font-size:.95rem; }
+  .tag{ font-size:.6rem; font-weight:800; letter-spacing:.5px; padding:.16rem .5rem;
+    border-radius:999px; white-space:nowrap; }
+  .tag.gold{ color:#2b1200; background:linear-gradient(135deg,var(--gold),var(--orange)); }
+  .tag.pink{ color:#fff; background:linear-gradient(135deg,var(--pink),#b3128f); }
+  .tag.dim{ color:var(--muted); background:var(--card2); border:1px solid rgba(255,255,255,.1); }
+  .trade{ display:flex; gap:.4rem; margin-top:.55rem; }
+  .tbox{ flex:1; border-radius:11px; padding:.4rem .2rem .35rem; text-align:center;
+    border:1px solid rgba(255,255,255,.08); background:rgba(0,0,0,.18); }
+  .tbox .k{ font-size:.58rem; font-weight:700; letter-spacing:.6px; color:var(--faint); text-transform:uppercase; }
+  .tbox .v{ font-family:var(--mono); font-weight:700; font-size:.85rem; margin-top:.05rem; }
+  .tbox.entry .v{ color:var(--cyan); } .tbox.sl .v{ color:var(--dn); } .tbox.tgt .v{ color:var(--up); }
+  .r3{ font-family:var(--mono); font-size:.68rem; color:var(--muted); margin-top:.45rem; }
+  .r3 b{ color:var(--text); font-weight:600; }
+  .empty{ color:var(--faint); text-align:center; padding:3.5rem 1rem; font-size:.8rem; }
+  .disclaimer{ text-align:center; color:var(--faint); font-size:.62rem; font-style:italic; padding:.8rem 1rem 0; }
+
+  nav{ position:fixed; left:.8rem; right:.8rem; bottom:calc(.8rem + env(safe-area-inset-bottom));
+    z-index:40; display:flex; gap:.25rem; padding:.32rem;
+    background:rgba(24,10,44,.92); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--line); border-radius:18px; box-shadow:0 12px 36px rgba(0,0,0,.55); }
+  nav button{ flex:1; background:none; border:none; border-radius:13px; cursor:pointer;
+    color:var(--muted); font-family:'Baloo 2'; font-size:.74rem; font-weight:800; padding:.62rem 0; line-height:1.25; }
+  nav button small{ display:block; font-size:.56rem; font-weight:600; color:var(--faint); }
+  nav button.on{ color:#2b0a18; background:linear-gradient(135deg,var(--gold),var(--pink));
+    box-shadow:0 5px 16px rgba(255,46,136,.4); }
+  nav button.on small{ color:rgba(43,10,24,.7); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hrow">
+    <span class="logo">🎬</span>
+    <div>
+      <h1>Bazaar Baadshah</h1>
+      <div class="tagline">Picture abhi baaki hai, mere dost…</div>
+    </div>
+    <button class="reload" onclick="boot()" title="refresh">↻</button>
+  </div>
+  <div class="stat" id="stat">lights, camera… loading 🎥</div>
+</header>
+
+<main>
+  <!-- ── Home: Nifty mood + sector picture ── -->
+  <div class="pane on" id="p-home">
+    <div id="mood"></div>
+    <div class="sec-head">
+      <span class="sec-title">🎭 Sector Picture</span>
+      <div class="seg" id="per-seg">
+        <button class="on" data-per="day" onclick="setPer('day')">Din</button>
+        <button data-per="week" onclick="setPer('week')">Hafta</button>
+        <button data-per="month" onclick="setPer('month')">Mahina</button>
+      </div>
+    </div>
+    <div id="l-sec" class="empty">Loading…</div>
+  </div>
+
+  <!-- ── Chupa Rustam (VCP recos) ── -->
+  <div class="pane" id="p-vcp">
+    <div class="legend"><b>🕵️ Chupa Rustam</b> — F&amp;O VCP coils: 3-month sprint ≥25%, ab 15-din se chup-chaap tight range mein.
+      <b>Entry</b> = breakout above the 15-day high · <b>Bachao (SL)</b> = 15-day low. Tap = chart.</div>
+    <div id="l-vcp" class="empty">Loading…</div>
+    <div class="disclaimer">Yeh recos hain, guarantee nahi — apna risk khud sambhalo 🙏</div>
+  </div>
+
+  <!-- ── Rocket Singh (10% movers) ── -->
+  <div class="pane" id="p-move">
+    <div class="legend"><b>🚀 Rocket Singh</b> — F&amp;O ignition candidates loaded for a +10% blast.
+      <b>Entry</b> above trigger · <b>Jackpot</b> = target · <b>Bachao (SL)</b> = stop. READY = full paisa-vasool setup.</div>
+    <div id="l-move" class="empty">Loading…</div>
+    <div class="disclaimer">Market hai bhai, Rocket bhi kabhi kabhi flop hota hai 🙏</div>
+  </div>
+</main>
+
+<nav>
+  <button class="on" data-p="home" onclick="show('home')">🎬 Bazaar<small>mood &amp; sectors</small></button>
+  <button data-p="vcp" onclick="show('vcp')">🕵️ Chupa Rustam<small>VCP recos</small></button>
+  <button data-p="move" onclick="show('move')">🚀 Rocket Singh<small>10% movers</small></button>
+</nav>
+
+<script>
+const SB_URL = "https://lgsgcccasccxfofxsbge.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxnc2djY2Nhc2NjeGZvZnhzYmdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NTI5MjMsImV4cCI6MjA5NzUyODkyM30.mUk6etxWdkxttwoHnG9-F2axvj680XXOKWmjaSRYuTA";
+const sb = supabase.createClient(SB_URL, SB_KEY);
+
+const fmt=(v,d=2)=>v==null?"—":Number(v).toLocaleString("en-IN",{minimumFractionDigits:d,maximumFractionDigits:d});
+const sgn=(v,d=1)=>v==null?"—":(v>=0?"+":"")+fmt(v,d)+"%";
+const cls=v=>(v??0)>=0?"pos":"neg";
+
+function show(p){
+  document.querySelectorAll(".pane").forEach(e=>e.classList.toggle("on", e.id==="p-"+p));
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on", b.dataset.p===p));
+}
+document.addEventListener("click", e=>{
+  const r=e.target.closest(".row");
+  if(r&&r.dataset.sym) window.open("https://www.tradingview.com/chart/?symbol=NSE%3A"+encodeURIComponent(r.dataset.sym),"_blank");
+});
+
+let fno=null, secData=null, per="day";
+async function loadFno(){
+  const { data } = await sb.from("stocks").select("symbol").eq("is_active",true).eq("is_fno",true);
+  fno=new Set((data||[]).map(r=>r.symbol));
+}
+async function latestDate(table){
+  const { data } = await sb.from(table).select("run_date").order("run_date",{ascending:false}).limit(1);
+  return data?.[0]?.run_date;
+}
+
+/* ── Nifty Ka Mood: MA read on ^NSEI closes ──
+   above 10 & 20 DMA → TEZI 🐂 · below 100 DMA → MANDI 🐻 · warna SAVDHAAN 🤔 */
+async function loadMood(){
+  const { data } = await sb.from("index_ohlcv").select("time,close")
+    .eq("symbol","^NSEI").order("time",{ascending:false}).limit(220);
+  const el=document.getElementById("mood");
+  if(!data||data.length<100){ el.innerHTML=""; return; }
+  const closes=data.map(r=>+r.close).reverse();
+  const last=closes[closes.length-1], prev=closes[closes.length-2];
+  const chg=(last/prev-1)*100;
+  const sma=n=>closes.slice(-n).reduce((a,b)=>a+b,0)/n;
+  const mas={10:sma(10),20:sma(20),50:sma(50),100:sma(100),200:closes.length>=200?sma(200):null};
+  const above=n=>mas[n]!=null&&last>mas[n];
+
+  let mood,emoji,line,klass;
+  if(above(10)&&above(20)){
+    mood="TEZI"; emoji="🐂"; klass="tezi";
+    line=above(50)&&above(100)&&above(200)?"Full speed mein hai boss — sab MA ke upar!"
+        :above(50)&&above(100)?"10 se 100 DMA sab ke upar — badhiya raftaar!"
+        :"10 & 20 DMA ke upar — gaadi chal padi!";
+  }else if(!above(100)){
+    mood="MANDI"; emoji="🐻"; klass="mandi";
+    line="100 DMA ke neeche — bhaago mat, par samajhdari se niklo!";
+  }else{
+    mood="SAVDHAAN"; emoji="🤔"; klass="savdhaan";
+    line="Beech ka scene hai — thoda dekh ke chalo, jaldi mat karo.";
+  }
+  el.className="mood "+klass;
+  el.innerHTML=`
+    <div class="mood-top">
+      <span class="mood-emoji">${emoji}</span>
+      <div>
+        <div class="mood-name">${mood}</div>
+        <div class="mood-line">${line}</div>
+      </div>
+      <div class="mood-px">
+        <div class="v">${fmt(last,0)}</div>
+        <div class="c ${cls(chg)}">${sgn(chg,2)}</div>
+      </div>
+    </div>
+    <div class="mas">${[10,20,50,100,200].filter(n=>mas[n]!=null).map(n=>
+      `<span class="ma ${above(n)?'a':'b'}">${above(n)?'▲':'▼'} ${n} DMA</span>`).join("")}
+    </div>`;
+}
+
+/* ── Sector picture (day / week / month) ── */
+async function loadSectors(){
+  const d0=await latestDate("scanner_sectors");
+  const { data } = await sb.from("scanner_sectors").select("*").eq("run_date",d0);
+  secData=data||[];
+  renderSectors();
+}
+function setPer(p){ per=p;
+  document.querySelectorAll("#per-seg button").forEach(b=>b.classList.toggle("on",b.dataset.per===p));
+  renderSectors(); }
+function renderSectors(){
+  const el=document.getElementById("l-sec");
+  const rows=(secData||[]).filter(r=>r.period===per)
+    .sort((a,b)=>(+b.avg_return)-(+a.avg_return));
+  if(!rows.length){ el.innerHTML='<div class="empty">No data</div>'; return; }
+  const maxAbs=Math.max(.5,...rows.map(r=>Math.abs(+r.avg_return)));
+  el.innerHTML=rows.map((r,i)=>{
+    const v=+r.avg_return, up=v>=0, w=Math.abs(v)/maxAbs*100;
+    const medal=i===0?"🏆 ":i===1?"🥈 ":i===2?"🥉 ":"";
+    return `<div class="srow">
+      <div class="sr1">
+        <span class="sname">${medal}${r.sector}</span>
+        <span class="scnt">${r.up_count}▲ ${r.down_count}▼</span>
+        <span class="sret ${up?'pos':'neg'}">${sgn(v)}</span>
+      </div>
+      <div class="sbar">${up
+        ?`<i style="width:${w}%;margin-left:auto;order:2;background:linear-gradient(90deg,rgba(46,236,139,.35),var(--up))"></i><i style="width:${100-w}%"></i>`
+        :`<i style="width:${w}%;background:linear-gradient(90deg,var(--dn),rgba(255,77,94,.35))"></i>`}</div>
+    </div>`;}).join("");
+}
+
+/* ── Chupa Rustam: VCP recos with Entry / SL ── */
+async function loadVCP(){
+  const d0=await latestDate("scanner_vcp");
+  const { data:raw } = await sb.from("scanner_vcp").select("*").eq("run_date",d0).order("range_15d_pct");
+  const el=document.getElementById("l-vcp");
+  const data=(raw||[]).filter(r=>fno.has(r.symbol));
+  if(!data.length){ el.innerHTML='<div class="empty">Aaj koi Rustam nahi mila 🤷</div>'; return 0; }
+  el.innerHTML=data.map(r=>{
+    const entry=+r.high_15d, slv=+r.low_15d;
+    const risk=entry>0?((entry-slv)/entry*100):null;
+    return `<div class="row" data-sym="${r.symbol}">
+      <div class="r1">
+        <span class="sym">${r.symbol}</span>
+        <span class="tag pink">${fmt(r.range_15d_pct,1)}% TIGHT</span>
+        <span class="big pos">+${fmt(r.return_3m,0)}% 3M</span>
+      </div>
+      <div class="trade">
+        <div class="tbox entry"><div class="k">🎯 Entry ></div><div class="v">${fmt(entry,1)}</div></div>
+        <div class="tbox sl"><div class="k">🛑 Bachao (SL)</div><div class="v">${fmt(slv,1)}</div></div>
+        <div class="tbox"><div class="k">⚖️ Risk</div><div class="v amb">${fmt(risk,1)}%</div></div>
+      </div>
+      <div class="r3">abhi <b>${fmt(r.close,1)}</b> pe hai · 15-din ka dayra ${fmt(slv,1)} – ${fmt(entry,1)}</div>
+    </div>`;}).join("");
+  return data.length;
+}
+
+/* ── Rocket Singh: 10% movers with trigger / target / SL ── */
+async function loadMove(){
+  const { data } = await sb.from("scanner_move_alerts").select("*")
+    .order("run_date",{ascending:false}).order("score",{ascending:false}).limit(500);
+  const el=document.getElementById("l-move");
+  if(!data||!data.length){ el.innerHTML='<div class="empty">Launchpad khaali hai 🚀</div>'; return 0; }
+  const latest=data[0].run_date;
+  const rows=data.filter(r=>r.run_date===latest && fno.has(r.symbol));
+  if(!rows.length){ el.innerHTML='<div class="empty">Aaj F&O mein koi rocket nahi 🤷</div>'; return 0; }
+  el.innerHTML=rows.map(r=>`<div class="row" data-sym="${r.symbol}">
+      <div class="r1">
+        <span class="sym">${r.symbol}</span>
+        <span class="tag ${r.tier==='READY'?'gold':'dim'}">${r.tier==='READY'?'🔥 READY':r.tier}</span>
+        <span class="big amb">${r.score}</span>
+        <span class="big ${cls(r.chg_pct)}">${sgn(r.chg_pct)}</span>
+      </div>
+      <div class="trade">
+        <div class="tbox entry"><div class="k">🎯 Entry ></div><div class="v">${fmt(r.trigger_price,1)}</div></div>
+        <div class="tbox tgt"><div class="k">💰 Jackpot</div><div class="v">${fmt(r.target_price,1)}</div></div>
+        <div class="tbox sl"><div class="k">🛑 Bachao (SL)</div><div class="v">${fmt(r.stop_price,1)}</div></div>
+      </div>
+      <div class="r3">abhi <b>${fmt(r.close,1)}</b> · rvol <b>${fmt(r.rvol,1)}×</b> · ATR ${fmt(r.atr_typ_pct,1)}%</div>
+    </div>`).join("");
+  return rows.length;
+}
+
+async function boot(){
+  const stat=document.getElementById("stat");
+  stat.innerHTML="reel ghoom rahi hai… 🎞️";
+  try{
+    if(!fno) await loadFno();
+    const [,,v,m]=await Promise.all([loadMood(),loadSectors(),loadVCP(),loadMove()]);
+    stat.innerHTML=`<span class="ok">● superhit</span> · Rustam ${v} · Rocket ${m} · `+
+      new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
+  }catch(e){
+    stat.innerHTML=`⚠ interval ho gaya — ${String(e).slice(0,60)}`;
+  }
+}
+boot();
+</script>
+</body>
+</html>
