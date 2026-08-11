@@ -121,6 +121,8 @@
   .r3{ font-family:var(--mono); font-size:.68rem; color:var(--muted); margin-top:.45rem; }
   .r3 b{ color:var(--text); font-weight:600; }
   .empty{ color:var(--faint); text-align:center; padding:3.5rem 1rem; font-size:.8rem; }
+  .subhead{ font-weight:800; font-size:.86rem; color:var(--text); margin:.6rem .15rem .45rem; }
+  .tag.bear{ color:#fff; background:linear-gradient(135deg,var(--dn),#b02347); }
   .disclaimer{ text-align:center; color:var(--faint); font-size:.62rem; font-style:italic; padding:.8rem 1rem 0; }
 
   nav{ position:fixed; left:.8rem; right:.8rem; bottom:calc(.8rem + env(safe-area-inset-bottom));
@@ -177,12 +179,23 @@
     <div id="l-move" class="empty">Loading…</div>
     <div class="disclaimer">Market hai bhai, Rocket bhi kabhi kabhi flop hota hai 🙏</div>
   </div>
+
+  <!-- ── Mandi Master (short calls) ── -->
+  <div class="pane" id="p-short">
+    <div class="runline">🐻 Mandi Master — short calls <span class="pill" id="short-date">📅 —</span></div>
+    <div class="subhead">💣 Fresh Breakdown — naya 6M/1Y/2Y low</div>
+    <div id="l-bd" class="empty">Loading…</div>
+    <div class="subhead">📉 Bear EP — girte sitare (last 60 din ke pivots)</div>
+    <div id="l-bep" class="empty">Loading…</div>
+    <div class="disclaimer">Shorting risky hai boss — SL ke bina haath mat lagana 🙏</div>
+  </div>
 </main>
 
 <nav>
-  <button class="on" data-p="home" onclick="show('home')">🎬 Bazaar<small>mood &amp; sectors</small></button>
-  <button data-p="vcp" onclick="show('vcp')">🕵️ Chupa Rustam<small>VCP recos</small></button>
-  <button data-p="move" onclick="show('move')">🚀 Rocket Singh<small>10% movers</small></button>
+  <button class="on" data-p="home" onclick="show('home')">🎬 Bazaar<small>mood</small></button>
+  <button data-p="vcp" onclick="show('vcp')">🕵️ Rustam<small>VCP long</small></button>
+  <button data-p="move" onclick="show('move')">🚀 Rocket<small>10% long</small></button>
+  <button data-p="short" onclick="show('short')">🐻 Mandi<small>shorts</small></button>
 </nav>
 
 <script>
@@ -345,13 +358,61 @@ async function loadMove(){
   return rows.length;
 }
 
+/* ── Mandi Master: short calls — fresh breakdowns + bearish EPs ── */
+async function loadShort(){
+  const bdEl=document.getElementById("l-bd"), epEl=document.getElementById("l-bep");
+  // 1) fresh 6M/1Y/2Y breakdowns (F&O) — short below close, rule-based +4% SL / −8% jackpot
+  const d0=await latestDate("scanner_breakouts");
+  document.getElementById("short-date").textContent="📅 trigger "+dt(d0);
+  const { data:bd } = await sb.from("scanner_breakouts").select("*").eq("run_date",d0)
+    .like("breakout_type","%LOW").order("change_pct",{ascending:true});
+  const bdr=(bd||[]).filter(r=>fno.has(r.symbol));
+  bdEl.classList.remove("empty");
+  bdEl.innerHTML = bdr.length ? bdr.map(r=>{
+    const c=+r.close, sl=c*1.04, tgt=c*0.92;
+    return `<div class="row" data-sym="${r.symbol}">
+      <div class="r1">
+        <span class="sym">${r.symbol}</span>
+        <span class="tag bear">${r.breakout_type.replace("_"," ")}</span>
+        <span class="big ${cls(r.change_pct)}">${sgn(r.change_pct)}</span>
+      </div>
+      <div class="trade">
+        <div class="tbox entry"><div class="k">🎯 Short <</div><div class="v">${fmt(c,1)}</div></div>
+        <div class="tbox sl"><div class="k">🛑 Bachao (+4%)</div><div class="v">${fmt(sl,1)}</div></div>
+        <div class="tbox tgt"><div class="k">💰 Jackpot (−8%)</div><div class="v">${fmt(tgt,1)}</div></div>
+      </div>
+      <div class="r3">📅 <b>${dt(r.run_date)}</b> · pehli baar iss level pe toota — continuation nahi</div>
+    </div>`;}).join("") : '<div class="empty" style="padding:1rem">Aaj koi naya breakdown nahi 🤷</div>';
+
+  // 2) bearish EPs from the last 60 days — short while it stays below the pivot close
+  const since=new Date(Date.now()-60*864e5).toISOString().slice(0,10);
+  const { data:ep } = await sb.from("scanner_ep").select("*").eq("ep_type","BEARISH")
+    .gte("run_date",since).order("return_since_pivot",{ascending:true}).limit(120);
+  const epr=(ep||[]).filter(r=>fno.has(r.symbol)).slice(0,30);
+  epEl.classList.remove("empty");
+  epEl.innerHTML = epr.length ? epr.map(r=>`<div class="row" data-sym="${r.symbol}">
+      <div class="r1">
+        <span class="sym">${r.symbol}</span>
+        <span class="tag bear">BEAR EP</span>
+        <span class="big ${cls(r.return_since_pivot)}">${sgn(r.return_since_pivot)}</span>
+      </div>
+      <div class="trade">
+        <div class="tbox entry"><div class="k">🎯 Short <</div><div class="v">${fmt(r.last_close,1)}</div></div>
+        <div class="tbox sl"><div class="k">🛑 Bachao (pivot)</div><div class="v">${fmt(r.close,1)}</div></div>
+        <div class="tbox risk"><div class="k">⚡ Vol</div><div class="v">${fmt(r.vol_ratio,1)}×</div></div>
+      </div>
+      <div class="r3">📅 pivot <b>${dt(r.run_date)}</b> @${fmt(r.close,1)} · gap ${sgn(r.gap_pct)} · pivot ke upar band = exit</div>
+    </div>`).join("") : '<div class="empty" style="padding:1rem">Koi bear EP nahi mila 🤷</div>';
+  return bdr.length+epr.length;
+}
+
 async function boot(){
   const stat=document.getElementById("stat");
   stat.innerHTML="reel ghoom rahi hai… 🎞️";
   try{
     if(!fno) await loadFno();
-    const [,,v,m]=await Promise.all([loadMood(),loadSectors(),loadVCP(),loadMove()]);
-    stat.innerHTML=`<span class="ok">● superhit</span> · Rustam ${v} · Rocket ${m} · `+
+    const [,,v,m,s]=await Promise.all([loadMood(),loadSectors(),loadVCP(),loadMove(),loadShort()]);
+    stat.innerHTML=`<span class="ok">● superhit</span> · Rustam ${v} · Rocket ${m} · Mandi ${s} · `+
       new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
   }catch(e){
     stat.innerHTML=`⚠ interval ho gaya — ${String(e).slice(0,60)}`;
