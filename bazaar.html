@@ -172,7 +172,7 @@
   <div class="pane" id="p-mandi">
     <div class="runline">🐻 Mandi Masters — ranked short ideas <span class="pill" id="mandi-date">📅 —</span></div>
     <div id="l-mandi" class="empty">Loading…</div>
-    <div class="disclaimer">💣 Fresh breakdown · 📉 Bear EP · top-500 market cap — shorting risky hai boss 🙏</div>
+    <div class="disclaimer">💣 Fresh breakdown · 🩸 Bear VCP (badi girawat on volume → tight contraction → falling 20DMA ko touch) · top-500 market cap — shorting risky hai boss 🙏</div>
   </div>
 </main>
 
@@ -343,12 +343,11 @@ function mergeIdeas(cands){
   return list;
 }
 async function loadMandi(){
-  const since=new Date(Date.now()-60*864e5).toISOString().slice(0,10);
   const d0=await latestDate("scanner_breakouts");
   document.getElementById("mandi-date").textContent="📅 "+dt(d0);
-  const [bd, ep] = await Promise.all([
+  const [bd, bv] = await Promise.all([
     sb.from("scanner_breakouts").select("*").eq("run_date",d0).like("breakout_type","%LOW"),
-    sb.from("scanner_ep").select("*").eq("ep_type","BEARISH").gte("run_date",since).limit(200),
+    sb.from("scanner_vcp_bear").select("*"),
   ]);
   const winScore={ "2Y":85, "1Y":75, "6M":65 };
   const cands=[];
@@ -357,9 +356,12 @@ async function loadMandi(){
     cands.push({ sym:r.symbol, score:(winScore[win]||60)+Math.min(Math.abs(+r.change_pct||0),10),
       detail:`💣 Fresh <b>${win} low</b> ${dt(r.run_date)} · <span class="${cls(r.change_pct)}">${sgn(r.change_pct)}</span> us din`});
   });
-  (ep.data||[]).filter(r=>uni.has(r.symbol)).forEach(r=>cands.push({
-    sym:r.symbol, score:45+Math.min(Math.abs(Math.min(+r.return_since_pivot,0)),50)*0.8,
-    detail:`📉 Bear EP ${dt(r.run_date)} @${fmt(r.close,1)} · <span class="${cls(r.return_since_pivot)}">${sgn(r.return_since_pivot)}</span> since pivot`}));
+  // inverse VCP: big high-volume fall → tight contraction → riding the falling 20 DMA
+  (bv.data||[]).filter(r=>uni.has(r.symbol)).forEach(r=>cands.push({
+    sym:r.symbol,
+    score:50+Math.min(Math.abs(+r.fall_3m_pct),60)/3+Math.max(0,15-+r.range_15d_pct)*1.5+(r.touching?8:0),
+    detail:`🩸 Bear VCP · <span class="neg">${sgn(r.fall_3m_pct,0)}</span> 3M girawat (vol <b>${fmt(r.fall_volx,1)}×</b>) · `+
+      `15d sirf <b>${fmt(r.range_15d_pct,1)}%</b> tight · 20DMA ↓ @${fmt(r.sma20,1)}${r.touching?' · <b>chhoo raha hai</b>':''}`}));
   const list=mergeIdeas(cands).slice(0,40);
   const el=document.getElementById("l-mandi");
   if(!list.length){ el.innerHTML='<div class="empty">Aaj koi short idea nahi 🤷</div>'; return 0; }
