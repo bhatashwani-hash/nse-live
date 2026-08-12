@@ -56,16 +56,18 @@
   .mood.tezi::before{ background:linear-gradient(90deg,var(--up),#5eead4); }
   .mood.mandi::before{ background:linear-gradient(90deg,var(--dn),#fb7185); }
   .mood.savdhaan::before{ background:linear-gradient(90deg,#f59e0b,#fbbf24); }
-  .mood-top{ display:flex; align-items:center; gap:.7rem; }
-  .mood-emoji{ font-size:34px; }
-  .mood-name{ font-size:1.3rem; font-weight:800; letter-spacing:.5px; line-height:1.05; }
-  .mood.tezi .mood-name{ color:var(--up); }
-  .mood.mandi .mood-name{ color:var(--dn); }
-  .mood.savdhaan .mood-name{ color:#d97706; }
-  .mood-line{ font-size:.72rem; color:var(--muted); margin-top:.18rem; line-height:1.35; }
-  .mood-px{ margin-left:auto; text-align:right; flex:0 0 auto; }
-  .mood-px .v{ font-family:var(--mono); font-size:1.3rem; font-weight:700; letter-spacing:-.5px; }
-  .mood-px .c{ font-family:var(--mono); font-size:.78rem; font-weight:700; }
+  .mood-top{ display:flex; align-items:baseline; gap:.7rem; }
+  .mood-idx{ font-size:.68rem; font-weight:700; letter-spacing:1.2px; color:var(--faint); text-transform:uppercase; }
+  .mood-px{ margin-left:auto; text-align:right; flex:0 0 auto; display:flex; align-items:baseline; gap:.55rem; }
+  .mood-px .v{ font-family:var(--mono); font-size:1.65rem; font-weight:700; letter-spacing:-.8px; }
+  .mood-px .c{ font-family:var(--mono); font-size:.82rem; font-weight:700; }
+  .gita{ margin-top:.75rem; padding-top:.7rem; border-top:1px dashed var(--line); }
+  .gita .sa{ font-size:.9rem; font-weight:600; line-height:1.75; }
+  .mood.tezi .gita .sa{ color:#0b7a58; }
+  .mood.mandi .gita .sa{ color:#c22843; }
+  .mood.savdhaan .gita .sa{ color:#b45309; }
+  .gita .en{ font-size:.7rem; color:var(--muted); margin-top:.35rem; line-height:1.45; font-style:italic; }
+  .gita .ref{ font-family:var(--mono); font-size:.6rem; color:var(--faint); margin-top:.3rem; }
   .mas{ display:flex; flex-wrap:wrap; gap:.32rem; margin-top:.7rem; }
   .ma{ font-family:var(--mono); font-size:.63rem; font-weight:700; padding:.2rem .52rem;
     border-radius:8px; }
@@ -225,28 +227,34 @@ async function loadMood(){
   const sma=n=>closes.slice(-n).reduce((a,b)=>a+b,0)/n;
   const mas={10:sma(10),20:sma(20),50:sma(50),100:sma(100),200:closes.length>=200?sma(200):null};
   const above=n=>mas[n]!=null&&last>mas[n];
-  let mood,emoji,line,klass;
-  if(above(10)&&above(20)){
-    mood="TEZI"; emoji="🐂"; klass="tezi";
-    line=above(50)&&above(100)&&above(200)?"Full speed mein hai boss — sab MA ke upar!"
-        :above(50)&&above(100)?"10 se 100 DMA sab ke upar — badhiya raftaar!"
-        :"10 & 20 DMA ke upar — gaadi chal padi!";
-  }else if(!above(100)){
-    mood="MANDI"; emoji="🐻"; klass="mandi";
-    line="100 DMA ke neeche — bhaago mat, par samajhdari se niklo!";
-  }else{
-    mood="SAVDHAAN"; emoji="🤔"; klass="savdhaan";
-    line="Beech ka scene hai — thoda dekh ke chalo.";
-  }
+  // regime → Bhagavad Gita shloka: bullish = act with focus, bearish = this too shall pass,
+  // in-between = patience, do the work without chasing the fruit
+  const GITA={
+    tezi:{ sa:"योगस्थः कुरु कर्माणि सङ्गं त्यक्त्वा धनञ्जय ।",
+      en:"Steadfast hoke karm karo, attachment chhod ke — trend ke saath chalo, par moh ke bina.",
+      ref:"— भगवद्गीता 2.48" },
+    mandi:{ sa:"मात्रास्पर्शास्तु कौन्तेय शीतोष्णसुखदुःखदाः । आगमापायिनोऽनित्यास्तांस्तितिक्षस्व भारत ॥",
+      en:"Sukh-dukh, garmi-sardi aate jaate hain — ye girawat bhi guzar jayegi, titiksha rakho.",
+      ref:"— भगवद्गीता 2.14" },
+    savdhaan:{ sa:"कर्मण्येवाधिकारस्ते मा फलेषु कदाचन ।",
+      en:"Apna karm karo, phal ki jaldi mat karo — abhi sabr ka samay hai.",
+      ref:"— भगवद्गीता 2.47" },
+  };
+  const klass = (above(10)&&above(20)) ? "tezi" : (!above(100)) ? "mandi" : "savdhaan";
+  const g=GITA[klass];
   el.className="mood "+klass;
   el.innerHTML=`
     <div class="mood-top">
-      <span class="mood-emoji">${emoji}</span>
-      <div><div class="mood-name">${mood}</div><div class="mood-line">${line}</div></div>
-      <div class="mood-px"><div class="v">${fmt(last,0)}</div><div class="c ${cls(chg)}">${sgn(chg,2)}</div></div>
+      <span class="mood-idx">Nifty 50</span>
+      <div class="mood-px"><span class="v">${fmt(last,0)}</span><span class="c ${cls(chg)}">${sgn(chg,2)}</span></div>
     </div>
     <div class="mas">${[10,20,50,100,200].filter(n=>mas[n]!=null).map(n=>
-      `<span class="ma ${above(n)?'a':'b'}">${above(n)?'▲':'▼'} ${n}D</span>`).join("")}</div>`;
+      `<span class="ma ${above(n)?'a':'b'}">${above(n)?'▲':'▼'} ${n}D</span>`).join("")}</div>
+    <div class="gita">
+      <div class="sa">${g.sa}</div>
+      <div class="en">${g.en}</div>
+      <div class="ref">${g.ref}</div>
+    </div>`;
 }
 
 /* ── Sector heatmap: 4×4 matrix of the 16 biggest sectors ── */
