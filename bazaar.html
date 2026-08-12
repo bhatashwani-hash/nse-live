@@ -232,83 +232,7 @@ async function loadMood(){
   const sma=n=>closes.slice(-n).reduce((a,b)=>a+b,0)/n;
   const mas={10:sma(10),20:sma(20),50:sma(50),100:sma(100),200:closes.length>=200?sma(200):null};
   const above=n=>mas[n]!=null&&last>mas[n];
-  // regime → Dhurandhar dialog + inline SVG scene (no external images)
-  const ART={
-    // warrior astride a charging bull, sword raised — dawn greens
-    tezi:`<svg viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-      <defs><linearGradient id="gT" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#065f46"/><stop offset="1" stop-color="#022c22"/></linearGradient></defs>
-      <rect width="360" height="150" fill="url(#gT)"/>
-      <circle cx="300" cy="34" r="26" fill="#fbbf24" opacity=".9"/>
-      <ellipse cx="180" cy="140" rx="200" ry="18" fill="#01120c"/>
-      <g fill="#04110c">
-        <path d="M70 108 C62 88 84 74 118 72 C160 66 214 68 244 78 C266 85 272 98 264 108
-                 C258 116 246 118 238 114 L232 128 L222 128 L226 112 L196 112 L192 128 L182 128 L184 110
-                 L128 110 L124 128 L114 128 L116 108 L92 110 L90 126 L80 126 L80 112 Z"/>
-        <path d="M70 108 C58 104 46 94 44 82 L58 84 L52 70 L70 80 L68 64 L84 78 C92 84 92 96 88 104 Z"/>
-        <path d="M244 84 C252 74 262 72 270 76 C264 80 262 84 262 90 Z"/>
-      </g>
-      <path d="M44 82 L30 72 M52 70 L42 58" stroke="#e7e5e4" stroke-width="5" stroke-linecap="round"/>
-      <g fill="#04110c">
-        <circle cx="176" cy="44" r="9"/>
-        <path d="M166 52 C160 62 162 72 168 78 L190 78 C196 68 192 56 186 52 Z"/>
-        <path d="M186 58 L206 46 L224 26" stroke="#04110c" stroke-width="6" stroke-linecap="round" fill="none"/>
-      </g>
-      <path d="M224 26 L252 6" stroke="#e7e5e4" stroke-width="4" stroke-linecap="round"/>
-      <path d="M168 62 L150 74" stroke="#04110c" stroke-width="6" stroke-linecap="round"/>
-    </svg>`,
-    // bear mid-growl, jaws open — deep reds
-    mandi:`<svg viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-      <defs><linearGradient id="gM" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#7f1d1d"/><stop offset="1" stop-color="#1c0707"/></linearGradient></defs>
-      <rect width="360" height="150" fill="url(#gM)"/>
-      <circle cx="62" cy="34" r="22" fill="#fecaca" opacity=".35"/>
-      <ellipse cx="180" cy="142" rx="200" ry="16" fill="#120303"/>
-      <g fill="#160404">
-        <path d="M120 132 C104 128 96 112 100 94 C104 78 118 64 140 58 C146 44 158 36 172 36
-                 C178 30 190 28 198 32 L212 40 C232 44 250 56 258 72 L286 66 L272 84 L288 88 L266 96
-                 C268 112 258 126 240 132 Z"/>
-        <path d="M198 32 C196 24 200 18 208 16 C212 22 212 28 208 34 Z"/>
-      </g>
-      <path d="M258 72 C274 70 288 74 296 82 C288 92 274 94 262 90 C258 84 256 78 258 72 Z" fill="#160404"/>
-      <path d="M262 90 C276 96 284 104 286 114 C274 114 262 108 256 98 Z" fill="#160404"/>
-      <g fill="#fee2e2">
-        <path d="M262 84 L268 92 L260 92 Z"/><path d="M274 84 L280 92 L272 92 Z"/>
-        <path d="M266 102 L272 94 L276 102 Z"/>
-      </g>
-      <circle cx="228" cy="58" r="4" fill="#fca5a5"/>
-      <path d="M300 70 L316 60 M304 84 L322 82 M300 96 L314 104" stroke="#fca5a5" stroke-width="3" stroke-linecap="round" opacity=".7"/>
-    </svg>`,
-    // warrior kneeling, sharpening his blade on a stone — amber night
-    savdhaan:`<svg viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-      <defs><linearGradient id="gS" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#78350f"/><stop offset="1" stop-color="#1c1108"/></linearGradient></defs>
-      <rect width="360" height="150" fill="url(#gS)"/>
-      <circle cx="66" cy="38" r="24" fill="#fcd34d" opacity=".8"/>
-      <ellipse cx="180" cy="140" rx="200" ry="16" fill="#140b03"/>
-      <g fill="#140b03">
-        <circle cx="216" cy="52" r="10"/>
-        <circle cx="226" cy="44" r="4"/>
-        <path d="M206 62 C198 72 196 84 200 94 L236 94 C240 82 236 68 226 62 Z"/>
-        <path d="M200 94 L188 116 L232 116 L236 94 Z"/>
-        <path d="M232 116 L244 116 L250 128 L196 128 L188 116 Z"/>
-      </g>
-      <path d="M206 70 L150 100 M228 70 L162 106" stroke="#140b03" stroke-width="7" stroke-linecap="round"/>
-      <path d="M96 122 L210 58" stroke="#e7e5e4" stroke-width="6" stroke-linecap="round"/>
-      <path d="M96 122 L210 58" stroke="#fafaf9" stroke-width="2" stroke-linecap="round" opacity=".8"/>
-      <rect x="118" y="106" width="40" height="16" rx="4" fill="#292524" transform="rotate(-8 138 114)"/>
-      <g stroke="#fbbf24" stroke-width="3" stroke-linecap="round">
-        <path d="M128 104 L120 92"/><path d="M136 102 L134 88"/><path d="M144 102 L150 90"/>
-      </g>
-    </svg>`,
-  };
-  const DHURANDHAR={
-    tezi:{ line:"“Free hand hai… go for the kill.”", art:ART.tezi },
-    mandi:{ line:"“Thoko market ko.”", art:ART.mandi },
-    savdhaan:{ line:"“Nazar aur sabar — dono mat chhodna.”", art:ART.savdhaan },
-  };
   const klass = (above(10)&&above(20)) ? "tezi" : (!above(100)) ? "mandi" : "savdhaan";
-  const g=DHURANDHAR[klass];
   el.className="mood "+klass;
   el.innerHTML=`
     <div class="mood-top">
@@ -316,11 +240,7 @@ async function loadMood(){
       <div class="mood-px"><span class="v">${fmt(last,0)}</span><span class="c ${cls(chg)}">${sgn(chg,2)}</span></div>
     </div>
     <div class="mas">${[10,20,50,100,200].filter(n=>mas[n]!=null).map(n=>
-      `<span class="ma ${above(n)?'a':'b'}">${above(n)?'▲':'▼'} ${n}D</span>`).join("")}</div>
-    <div class="gita">
-      <div class="art">${g.art}</div>
-      <div class="sa">${g.line}</div>
-    </div>`;
+      `<span class="ma ${above(n)?'a':'b'}">${above(n)?'▲':'▼'} ${n}D</span>`).join("")}</div>`;
 }
 
 /* ── Sector heatmap: 4×4 matrix of the 16 biggest sectors ── */
