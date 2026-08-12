@@ -332,7 +332,9 @@ async function loadTezi(){
     const ret=now?((now/+r.close-1)*100):null;
     const days=Math.round((Date.now()-new Date(r.run_date).getTime())/864e5);
     return { sym:r.symbol, ret, now, days, r };
-  }).sort((a,b)=>(b.ret??-1e9)-(a.ret??-1e9));
+  }).sort((a,b)=> a.r.run_date!==b.r.run_date
+      ? (a.r.run_date<b.r.run_date?1:-1)          // newest trigger first
+      : (b.ret??-1e9)-(a.ret??-1e9));             // same day → best return first
   el.classList.remove("empty");
   el.innerHTML=list.map((e,i)=>{
     const medal=i===0?"🏆":i===1?"🥈":i===2?"🥉":"#"+(i+1);
