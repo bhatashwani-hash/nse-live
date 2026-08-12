@@ -164,9 +164,9 @@
 
   <!-- ── Tezi: ranked long ideas ── -->
   <div class="pane" id="p-tezi">
-    <div class="runline">🐂 Tezi Toppers — VCP triggers, last 10 din <span class="pill" id="tezi-date">📅 —</span></div>
+    <div class="runline">🐂 Tezi Toppers — last 10 din ke triggers <span class="pill" id="tezi-date">📅 —</span></div>
     <div id="l-tezi" class="empty">Loading…</div>
-    <div class="disclaimer">🕵️ VCP coils · top-500 market cap · rank = return after trigger 🙏</div>
+    <div class="disclaimer">top-500 market cap · naya trigger sabse upar · return = trigger ke baad ka move 🙏</div>
   </div>
 
   <!-- ── Mandi: ranked short ideas ── -->
@@ -342,11 +342,9 @@ async function loadTezi(){
       <div class="r1">
         <span class="rank ${i<3?'top':''}">${medal}</span>
         <span class="sym">${e.sym}</span>
-        <span class="badges"><span class="bdg">🕵️</span></span>
         <span class="josh ${(e.ret??0)>=0?'up':'dn'}">${sgn(e.ret)}</span>
       </div>
-      <div class="r2">📅 trigger <b>${dt(e.r.run_date)}</b> (${e.days}d) @${fmt(e.r.close,1)} → ab <b>${fmt(e.now,1)}</b><br>
-        🕵️ <b>${fmt(e.r.range_15d_pct,1)}%</b> tight · <span class="pos">+${fmt(e.r.return_3m,0)}%</span> 3M pehle se</div>
+      <div class="r2">📅 trigger <b>${dt(e.r.run_date)}</b> (${e.days}d) @${fmt(e.r.close,1)} → ab <b>${fmt(e.now,1)}</b></div>
     </div>`;}).join("");
   return list.length;
 }
