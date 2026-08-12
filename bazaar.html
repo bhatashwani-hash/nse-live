@@ -164,16 +164,16 @@
 
   <!-- ── Tezi: ranked long ideas ── -->
   <div class="pane" id="p-tezi">
-    <div class="runline">🐂 Tezi Toppers — ranked long ideas <span class="pill" id="tezi-date">📅 —</span></div>
+    <div class="runline">🐂 Tezi Toppers — VCP triggers, last 10 din <span class="pill" id="tezi-date">📅 —</span></div>
     <div id="l-tezi" class="empty">Loading…</div>
-    <div class="disclaimer">🚀 Rocket (10% move) · 🕵️ Rustam (VCP) · ⚡ EP · 🪝 Snapback — jitne zyada badge, utna zyada josh 🙏</div>
+    <div class="disclaimer">🕵️ VCP coils · top-500 market cap · rank = return after trigger 🙏</div>
   </div>
 
   <!-- ── Mandi: ranked short ideas ── -->
   <div class="pane" id="p-mandi">
     <div class="runline">🐻 Mandi Masters — ranked short ideas <span class="pill" id="mandi-date">📅 —</span></div>
     <div id="l-mandi" class="empty">Loading…</div>
-    <div class="disclaimer">💣 Fresh breakdown · 📉 Bear EP — shorting risky hai boss, soch samajh ke 🙏</div>
+    <div class="disclaimer">💣 Fresh breakdown · 📉 Bear EP · top-500 market cap — shorting risky hai boss 🙏</div>
   </div>
 </main>
 
@@ -203,10 +203,12 @@ document.addEventListener("click", e=>{
   if(r&&r.dataset.sym) window.open("https://www.tradingview.com/chart/?symbol=NSE%3A"+encodeURIComponent(r.dataset.sym),"_blank");
 });
 
-let fno=null, secData=null, per="day";
-async function loadFno(){
-  const { data } = await sb.from("stocks").select("symbol").eq("is_active",true).eq("is_fno",true);
-  fno=new Set((data||[]).map(r=>r.symbol));
+let uni=null, secData=null, per="day";
+// universe: top 500 stocks by market cap
+async function loadUni(){
+  const { data } = await sb.from("stocks").select("symbol,market_cap").eq("is_active",true)
+    .not("market_cap","is",null).order("market_cap",{ascending:false}).limit(500);
+  uni=new Set((data||[]).map(r=>r.symbol));
 }
 async function latestDate(table){
   const { data } = await sb.from(table).select("run_date").order("run_date",{ascending:false}).limit(1);
@@ -306,35 +308,44 @@ function renderRanked(el, list, dir){
     </div>`;}).join("");
 }
 
-/* ── Tezi Toppers: VCP + 10% move + bull EP + snapback, ranked ── */
+/* ── Tezi Toppers: VCP triggers from the last 10 trading days,
+      ranked by return since the trigger day ── */
 async function loadTezi(){
-  const since=new Date(Date.now()-60*864e5).toISOString().slice(0,10);
-  const [mv, vcpD] = await Promise.all([
-    sb.from("scanner_move_alerts").select("*").order("run_date",{ascending:false}).order("score",{ascending:false}).limit(500),
-    latestDate("scanner_vcp"),
-  ]);
-  const [vcp, ep, snp] = await Promise.all([
-    sb.from("scanner_vcp").select("*").eq("run_date",vcpD),
-    sb.from("scanner_ep").select("*").eq("ep_type","BULLISH").gte("run_date",since).limit(200),
-    sb.from("scanner_snapback").select("*"),
-  ]);
-  const mvLatest=mv.data?.[0]?.run_date;
-  document.getElementById("tezi-date").textContent="📅 "+dt(mvLatest);
-  const cands=[];
-  (mv.data||[]).filter(r=>r.run_date===mvLatest&&fno.has(r.symbol)).forEach(r=>cands.push({
-    sym:r.symbol, badge:"🚀", score:+r.score,
-    detail:`🚀 10% move · josh <b>${r.score}</b>${r.tier==='READY'?' · 🔥READY':''} · rvol <b>${fmt(r.rvol,1)}×</b> · <span class="${cls(r.chg_pct)}">${sgn(r.chg_pct)}</span> aaj`}));
-  (vcp.data||[]).filter(r=>fno.has(r.symbol)).forEach(r=>cands.push({
-    sym:r.symbol, badge:"🕵️", score:45+Math.max(0,15-+r.range_15d_pct)*2+Math.min(+r.return_3m,60)/6,
-    detail:`🕵️ VCP · <b>${fmt(r.range_15d_pct,1)}%</b> tight · <span class="pos">+${fmt(r.return_3m,0)}%</span> 3M · band ${fmt(r.low_15d,1)}–${fmt(r.high_15d,1)}`}));
-  (ep.data||[]).filter(r=>fno.has(r.symbol)).forEach(r=>cands.push({
-    sym:r.symbol, badge:"⚡", score:40+Math.min(Math.max(+r.return_since_pivot,0),50)*0.8,
-    detail:`⚡ Bull EP ${dt(r.run_date)} · <span class="${cls(r.return_since_pivot)}">${sgn(r.return_since_pivot)}</span> since pivot · vol ${fmt(r.vol_ratio,1)}×`}));
-  (snp.data||[]).forEach(r=>cands.push({
-    sym:r.symbol, badge:"🪝", score:40+(+r.score||0)*10,
-    detail:`🪝 Snapback · ${r.low_window} low ${dt(r.low_date)} reclaimed · <span class="${cls(r.pct_off_low)}">${sgn(r.pct_off_low)}</span> off low · ★${r.score}/4`}));
-  const list=mergeIdeas(cands).slice(0,40);
-  renderRanked(document.getElementById("l-tezi"), list, "up");
+  const since=new Date(Date.now()-16*864e5).toISOString().slice(0,10);   // ~10 trading days
+  const { data:vcp } = await sb.from("scanner_vcp").select("*")
+    .gte("run_date",since).order("run_date",{ascending:true});
+  const el=document.getElementById("l-tezi");
+  const rows=(vcp||[]).filter(r=>uni.has(r.symbol));
+  if(!rows.length){ el.innerHTML='<div class="empty">Pichle 10 din mein koi VCP trigger nahi 🤷</div>'; return 0; }
+  // first trigger per symbol within the window
+  const first={};
+  rows.forEach(r=>{ if(!first[r.symbol]) first[r.symbol]=r; });
+  const trig=Object.values(first);
+  const dates=[...new Set(rows.map(r=>r.run_date))].sort();
+  document.getElementById("tezi-date").textContent=`📅 ${dt(dates[0])} – ${dt(dates[dates.length-1])}`;
+  // latest close per symbol for return-after-trigger
+  const { data:px } = await sb.from("ohlcv").select("symbol,time,close")
+    .in("symbol",trig.map(r=>r.symbol)).gte("time",since).order("time",{ascending:true});
+  const lastPx={}; (px||[]).forEach(p=>{ lastPx[p.symbol]=+p.close; });
+  const list=trig.map(r=>{
+    const now=lastPx[r.symbol];
+    const ret=now?((now/+r.close-1)*100):null;
+    const days=Math.round((Date.now()-new Date(r.run_date).getTime())/864e5);
+    return { sym:r.symbol, ret, now, days, r };
+  }).sort((a,b)=>(b.ret??-1e9)-(a.ret??-1e9));
+  el.classList.remove("empty");
+  el.innerHTML=list.map((e,i)=>{
+    const medal=i===0?"🏆":i===1?"🥈":i===2?"🥉":"#"+(i+1);
+    return `<div class="row" data-sym="${e.sym}">
+      <div class="r1">
+        <span class="rank ${i<3?'top':''}">${medal}</span>
+        <span class="sym">${e.sym}</span>
+        <span class="badges"><span class="bdg">🕵️</span></span>
+        <span class="josh ${(e.ret??0)>=0?'up':'dn'}">${sgn(e.ret)}</span>
+      </div>
+      <div class="r2">📅 trigger <b>${dt(e.r.run_date)}</b> (${e.days}d) @${fmt(e.r.close,1)} → ab <b>${fmt(e.now,1)}</b><br>
+        🕵️ <b>${fmt(e.r.range_15d_pct,1)}%</b> tight · <span class="pos">+${fmt(e.r.return_3m,0)}%</span> 3M pehle se</div>
+    </div>`;}).join("");
   return list.length;
 }
 
@@ -349,12 +360,12 @@ async function loadMandi(){
   ]);
   const winScore={ "2Y":85, "1Y":75, "6M":65 };
   const cands=[];
-  (bd.data||[]).filter(r=>fno.has(r.symbol)).forEach(r=>{
+  (bd.data||[]).filter(r=>uni.has(r.symbol)).forEach(r=>{
     const win=r.breakout_type.split("_")[0];
     cands.push({ sym:r.symbol, badge:"💣", score:(winScore[win]||60)+Math.min(Math.abs(+r.change_pct||0),10),
       detail:`💣 Fresh <b>${win} low</b> ${dt(r.run_date)} · <span class="${cls(r.change_pct)}">${sgn(r.change_pct)}</span> us din · pehli baar toota`});
   });
-  (ep.data||[]).filter(r=>fno.has(r.symbol)).forEach(r=>cands.push({
+  (ep.data||[]).filter(r=>uni.has(r.symbol)).forEach(r=>cands.push({
     sym:r.symbol, badge:"📉", score:45+Math.min(Math.abs(Math.min(+r.return_since_pivot,0)),50)*0.8,
     detail:`📉 Bear EP ${dt(r.run_date)} @${fmt(r.close,1)} · <span class="${cls(r.return_since_pivot)}">${sgn(r.return_since_pivot)}</span> since pivot · gap ${sgn(r.gap_pct)}`}));
   const list=mergeIdeas(cands).slice(0,40);
@@ -366,7 +377,7 @@ async function boot(){
   const stat=document.getElementById("stat");
   stat.innerHTML="reel ghoom rahi hai… 🎞️";
   try{
-    if(!fno) await loadFno();
+    if(!uni) await loadUni();
     const [,,t,m]=await Promise.all([loadMood(),loadSectors(),loadTezi(),loadMandi()]);
     stat.innerHTML=`<span class="ok">● superhit</span> · Tezi ${t} · Mandi ${m} · `+
       new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
