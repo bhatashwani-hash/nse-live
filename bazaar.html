@@ -65,7 +65,9 @@
   .mood-px .v{ font-family:var(--mono); font-size:1.65rem; font-weight:700; letter-spacing:-.8px; }
   .mood-px .c{ font-family:var(--mono); font-size:.82rem; font-weight:700; }
   .gita{ margin-top:.75rem; padding-top:.7rem; border-top:1px dashed var(--line); }
-  .gita .sa{ font-size:.9rem; font-weight:600; line-height:1.75; }
+  .gita .maddy{ width:100%; max-height:170px; object-fit:cover; border-radius:13px;
+    margin-bottom:.6rem; display:block; }
+  .gita .sa{ font-size:1rem; font-weight:800; line-height:1.5; letter-spacing:-.2px; }
   .mood.tezi .gita .sa{ color:#0b7a58; }
   .mood.mandi .gita .sa{ color:#c22843; }
   .mood.savdhaan .gita .sa{ color:#b45309; }
@@ -230,21 +232,15 @@ async function loadMood(){
   const sma=n=>closes.slice(-n).reduce((a,b)=>a+b,0)/n;
   const mas={10:sma(10),20:sma(20),50:sma(50),100:sma(100),200:closes.length>=200?sma(200):null};
   const above=n=>mas[n]!=null&&last>mas[n];
-  // regime → Bhagavad Gita shloka: bullish = act with focus, bearish = this too shall pass,
-  // in-between = patience, do the work without chasing the fruit
-  const GITA={
-    tezi:{ sa:"योगस्थः कुरु कर्माणि सङ्गं त्यक्त्वा धनञ्जय ।",
-      en:"Steadfast hoke karm karo, attachment chhod ke — trend ke saath chalo, par moh ke bina.",
-      ref:"— भगवद्गीता 2.48" },
-    mandi:{ sa:"मात्रास्पर्शास्तु कौन्तेय शीतोष्णसुखदुःखदाः । आगमापायिनोऽनित्यास्तांस्तितिक्षस्व भारत ॥",
-      en:"Sukh-dukh, garmi-sardi aate jaate hain — ye girawat bhi guzar jayegi, titiksha rakho.",
-      ref:"— भगवद्गीता 2.14" },
-    savdhaan:{ sa:"कर्मण्येवाधिकारस्ते मा फलेषु कदाचन ।",
-      en:"Apna karm karo, phal ki jaldi mat karo — abhi sabr ka samay hai.",
-      ref:"— भगवद्गीता 2.47" },
+  // regime → Dhurandhar dialog: bull = free hand, bear = thoko, in-between = nazar aur sabar (+ Maddy)
+  const DHURANDHAR={
+    tezi:{ line:"“Free hand hai… go for the kill.”" },
+    mandi:{ line:"“Thoko market ko.”" },
+    savdhaan:{ line:"“Nazar aur sabar — dono mat chhodna.”",
+      gif:"https://media.tenor.com/Xv7Z3AFVpdcAAAAM/dhurandhar-dhurandhar-movie.gif" },
   };
   const klass = (above(10)&&above(20)) ? "tezi" : (!above(100)) ? "mandi" : "savdhaan";
-  const g=GITA[klass];
+  const g=DHURANDHAR[klass];
   el.className="mood "+klass;
   el.innerHTML=`
     <div class="mood-top">
@@ -254,7 +250,8 @@ async function loadMood(){
     <div class="mas">${[10,20,50,100,200].filter(n=>mas[n]!=null).map(n=>
       `<span class="ma ${above(n)?'a':'b'}">${above(n)?'▲':'▼'} ${n}D</span>`).join("")}</div>
     <div class="gita">
-      <div class="sa">${g.sa}</div>
+      ${g.gif?`<img class="maddy" src="${g.gif}" alt="Dhurandhar" loading="lazy">`:""}
+      <div class="sa">${g.line}</div>
     </div>`;
 }
 
