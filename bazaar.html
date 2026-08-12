@@ -91,38 +91,32 @@
   .sbar i{ display:block; height:100%; border-radius:4px; }
   .pos{ color:var(--up); } .neg{ color:var(--dn); } .amb{ color:#d18a08; }
 
-  /* ── reco cards ── */
+  /* ── ranked idea cards ── */
   .runline{ display:flex; align-items:center; gap:.4rem; color:var(--muted);
-    font-size:.72rem; font-weight:700; padding:.1rem .2rem .6rem; }
+    font-size:.72rem; font-weight:700; padding:.1rem .2rem .6rem; flex-wrap:wrap; }
   .runline .pill{ font-family:var(--mono); font-size:.66rem; font-weight:700; color:var(--violet);
     background:rgba(124,92,252,.1); border:1px solid rgba(124,92,252,.25);
     border-radius:999px; padding:.14rem .55rem; }
   .row{ background:var(--card); border:1px solid var(--line); border-radius:16px;
-    padding:.75rem .85rem .65rem; margin-bottom:.6rem; cursor:pointer;
+    padding:.65rem .8rem .55rem; margin-bottom:.55rem; cursor:pointer;
     box-shadow:0 4px 14px rgba(36,26,61,.07); }
   .row:active{ transform:scale(.985); background:var(--soft); }
   .r1{ display:flex; align-items:center; gap:.5rem; }
-  .sym{ font-weight:800; font-size:1.05rem; letter-spacing:.2px; flex:1;
+  .rank{ font-family:var(--mono); font-weight:800; font-size:.8rem; min-width:2.3em;
+    color:var(--faint); }
+  .rank.top{ color:#b8860b; }
+  .sym{ font-weight:800; font-size:1.02rem; letter-spacing:.2px; flex:1;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .big{ font-family:var(--mono); font-weight:700; font-size:.95rem; }
-  .tag{ font-size:.6rem; font-weight:800; letter-spacing:.5px; padding:.16rem .5rem;
-    border-radius:999px; white-space:nowrap; }
-  .tag.gold{ color:#5c3a00; background:linear-gradient(135deg,#ffe9b8,#ffd98a); }
-  .tag.pink{ color:#fff; background:linear-gradient(135deg,var(--pink),var(--violet)); }
-  .tag.dim{ color:var(--muted); background:var(--soft); border:1px solid var(--line); }
-  .trade{ display:flex; gap:.4rem; margin-top:.55rem; }
-  .tbox{ flex:1; border-radius:11px; padding:.4rem .2rem .35rem; text-align:center; border:1px solid; }
-  .tbox .k{ font-size:.58rem; font-weight:700; letter-spacing:.6px; color:var(--muted); text-transform:uppercase; }
-  .tbox .v{ font-family:var(--mono); font-weight:700; font-size:.85rem; margin-top:.05rem; }
-  .tbox.entry{ background:#eef7fd; border-color:#d3eaf8; } .tbox.entry .v{ color:var(--cyan); }
-  .tbox.sl{ background:var(--dnbg); border-color:#f8d3dd; } .tbox.sl .v{ color:var(--dn); }
-  .tbox.tgt{ background:var(--upbg); border-color:#cdeeda; } .tbox.tgt .v{ color:var(--up); }
-  .tbox.risk{ background:#fdf4e3; border-color:#f5e3bd; } .tbox.risk .v{ color:#d18a08; }
-  .r3{ font-family:var(--mono); font-size:.68rem; color:var(--muted); margin-top:.45rem; }
-  .r3 b{ color:var(--text); font-weight:600; }
+  .badges{ display:flex; gap:.2rem; }
+  .bdg{ font-size:.78rem; }
+  .josh{ font-family:var(--mono); font-weight:800; font-size:.9rem; padding:.12rem .5rem;
+    border-radius:999px; }
+  .josh.up{ color:var(--up); background:var(--upbg); }
+  .josh.dn{ color:var(--dn); background:var(--dnbg); }
+  .r2{ font-family:var(--mono); font-size:.68rem; color:var(--muted); margin-top:.35rem; line-height:1.6; }
+  .r2 b{ color:var(--text); font-weight:600; }
+  .r2 .pos{ color:var(--up); } .r2 .neg{ color:var(--dn); }
   .empty{ color:var(--faint); text-align:center; padding:3.5rem 1rem; font-size:.8rem; }
-  .subhead{ font-weight:800; font-size:.86rem; color:var(--text); margin:.6rem .15rem .45rem; }
-  .tag.bear{ color:#fff; background:linear-gradient(135deg,var(--dn),#b02347); }
   .disclaimer{ text-align:center; color:var(--faint); font-size:.62rem; font-style:italic; padding:.8rem 1rem 0; }
 
   nav{ position:fixed; left:.8rem; right:.8rem; bottom:calc(.8rem + env(safe-area-inset-bottom));
@@ -130,11 +124,13 @@
     background:rgba(255,255,255,.92); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
     border:1px solid var(--line); border-radius:18px; box-shadow:0 10px 30px rgba(36,26,61,.16); }
   nav button{ flex:1; background:none; border:none; border-radius:13px; cursor:pointer;
-    color:var(--muted); font-family:'Baloo 2'; font-size:.74rem; font-weight:800; padding:.62rem 0; line-height:1.25; }
+    color:var(--muted); font-family:'Baloo 2'; font-size:.78rem; font-weight:800; padding:.62rem 0; line-height:1.25; }
   nav button small{ display:block; font-size:.56rem; font-weight:600; color:var(--faint); }
-  nav button.on{ color:#fff; background:linear-gradient(135deg,var(--pink),var(--orange));
-    box-shadow:0 5px 16px rgba(244,63,142,.35); }
+  nav button.on{ color:#fff; box-shadow:0 5px 16px rgba(36,26,61,.25); }
   nav button.on small{ color:rgba(255,255,255,.8); }
+  nav button[data-p="home"].on{ background:linear-gradient(135deg,var(--pink),var(--orange)); }
+  nav button[data-p="tezi"].on{ background:linear-gradient(135deg,#0ca86a,#2dd4a0); }
+  nav button[data-p="mandi"].on{ background:linear-gradient(135deg,var(--dn),#b02347); }
 </style>
 </head>
 <body>
@@ -166,36 +162,25 @@
     <div id="l-sec" class="empty">Loading…</div>
   </div>
 
-  <!-- ── Chupa Rustam (VCP recos) ── -->
-  <div class="pane" id="p-vcp">
-    <div class="runline">🕵️ Chupa Rustam <span class="pill" id="vcp-date">📅 —</span></div>
-    <div id="l-vcp" class="empty">Loading…</div>
-    <div class="disclaimer">Yeh recos hain, guarantee nahi — apna risk khud sambhalo 🙏</div>
+  <!-- ── Tezi: ranked long ideas ── -->
+  <div class="pane" id="p-tezi">
+    <div class="runline">🐂 Tezi Toppers — ranked long ideas <span class="pill" id="tezi-date">📅 —</span></div>
+    <div id="l-tezi" class="empty">Loading…</div>
+    <div class="disclaimer">🚀 Rocket (10% move) · 🕵️ Rustam (VCP) · ⚡ EP · 🪝 Snapback — jitne zyada badge, utna zyada josh 🙏</div>
   </div>
 
-  <!-- ── Rocket Singh (10% movers) ── -->
-  <div class="pane" id="p-move">
-    <div class="runline">🚀 Rocket Singh <span class="pill" id="move-date">📅 —</span></div>
-    <div id="l-move" class="empty">Loading…</div>
-    <div class="disclaimer">Market hai bhai, Rocket bhi kabhi kabhi flop hota hai 🙏</div>
-  </div>
-
-  <!-- ── Mandi Master (short calls) ── -->
-  <div class="pane" id="p-short">
-    <div class="runline">🐻 Mandi Master — short calls <span class="pill" id="short-date">📅 —</span></div>
-    <div class="subhead">💣 Fresh Breakdown — naya 6M/1Y/2Y low</div>
-    <div id="l-bd" class="empty">Loading…</div>
-    <div class="subhead">📉 Bear EP — girte sitare (last 60 din ke pivots)</div>
-    <div id="l-bep" class="empty">Loading…</div>
-    <div class="disclaimer">Shorting risky hai boss — SL ke bina haath mat lagana 🙏</div>
+  <!-- ── Mandi: ranked short ideas ── -->
+  <div class="pane" id="p-mandi">
+    <div class="runline">🐻 Mandi Masters — ranked short ideas <span class="pill" id="mandi-date">📅 —</span></div>
+    <div id="l-mandi" class="empty">Loading…</div>
+    <div class="disclaimer">💣 Fresh breakdown · 📉 Bear EP — shorting risky hai boss, soch samajh ke 🙏</div>
   </div>
 </main>
 
 <nav>
-  <button class="on" data-p="home" onclick="show('home')">🎬 Bazaar<small>mood</small></button>
-  <button data-p="vcp" onclick="show('vcp')">🕵️ Rustam<small>VCP long</small></button>
-  <button data-p="move" onclick="show('move')">🚀 Rocket<small>10% long</small></button>
-  <button data-p="short" onclick="show('short')">🐻 Mandi<small>shorts</small></button>
+  <button class="on" data-p="home" onclick="show('home')">🎬 Bazaar<small>mood &amp; sectors</small></button>
+  <button data-p="tezi" onclick="show('tezi')">🐂 Tezi<small>long ranks</small></button>
+  <button data-p="mandi" onclick="show('mandi')">🐻 Mandi<small>short ranks</small></button>
 </nav>
 
 <script>
@@ -228,8 +213,7 @@ async function latestDate(table){
   return data?.[0]?.run_date;
 }
 
-/* ── Nifty Ka Mood: MA read on ^NSEI closes ──
-   above 10 & 20 DMA → TEZI 🐂 · below 100 DMA → MANDI 🐻 · warna SAVDHAAN 🤔 */
+/* ── Nifty Ka Mood: MA read on ^NSEI closes ── */
 async function loadMood(){
   const { data } = await sb.from("index_ohlcv").select("time,close")
     .eq("symbol","^NSEI").order("time",{ascending:false}).limit(220);
@@ -241,7 +225,6 @@ async function loadMood(){
   const sma=n=>closes.slice(-n).reduce((a,b)=>a+b,0)/n;
   const mas={10:sma(10),20:sma(20),50:sma(50),100:sma(100),200:closes.length>=200?sma(200):null};
   const above=n=>mas[n]!=null&&last>mas[n];
-
   let mood,emoji,line,klass;
   if(above(10)&&above(20)){
     mood="TEZI"; emoji="🐂"; klass="tezi";
@@ -259,151 +242,124 @@ async function loadMood(){
   el.innerHTML=`
     <div class="mood-top">
       <span class="mood-emoji">${emoji}</span>
-      <div>
-        <div class="mood-name">${mood}</div>
-        <div class="mood-line">${line}</div>
-      </div>
-      <div class="mood-px">
-        <div class="v">${fmt(last,0)}</div>
-        <div class="c ${cls(chg)}">${sgn(chg,2)}</div>
-      </div>
+      <div><div class="mood-name">${mood}</div><div class="mood-line">${line}</div></div>
+      <div class="mood-px"><div class="v">${fmt(last,0)}</div><div class="c ${cls(chg)}">${sgn(chg,2)}</div></div>
     </div>
     <div class="mas">${[10,20,50,100,200].filter(n=>mas[n]!=null).map(n=>
-      `<span class="ma ${above(n)?'a':'b'}">${above(n)?'▲':'▼'} ${n} DMA</span>`).join("")}
-    </div>`;
+      `<span class="ma ${above(n)?'a':'b'}">${above(n)?'▲':'▼'} ${n} DMA</span>`).join("")}</div>`;
 }
 
-/* ── Sector picture (day / week / month) ── */
+/* ── Sector picture ── */
 async function loadSectors(){
   const d0=await latestDate("scanner_sectors");
   const { data } = await sb.from("scanner_sectors").select("*").eq("run_date",d0);
-  secData=data||[];
-  renderSectors();
+  secData=data||[]; renderSectors();
 }
 function setPer(p){ per=p;
   document.querySelectorAll("#per-seg button").forEach(b=>b.classList.toggle("on",b.dataset.per===p));
   renderSectors(); }
 function renderSectors(){
   const el=document.getElementById("l-sec");
-  const rows=(secData||[]).filter(r=>r.period===per)
-    .sort((a,b)=>(+b.avg_return)-(+a.avg_return));
+  const rows=(secData||[]).filter(r=>r.period===per).sort((a,b)=>(+b.avg_return)-(+a.avg_return));
   if(!rows.length){ el.innerHTML='<div class="empty">No data</div>'; return; }
   const maxAbs=Math.max(.5,...rows.map(r=>Math.abs(+r.avg_return)));
   el.innerHTML=rows.map((r,i)=>{
     const v=+r.avg_return, up=v>=0, w=Math.abs(v)/maxAbs*100;
     const medal=i===0?"🏆 ":i===1?"🥈 ":i===2?"🥉 ":"";
     return `<div class="srow">
-      <div class="sr1">
-        <span class="sname">${medal}${r.sector}</span>
+      <div class="sr1"><span class="sname">${medal}${r.sector}</span>
         <span class="scnt">${r.up_count}▲ ${r.down_count}▼</span>
-        <span class="sret ${up?'pos':'neg'}">${sgn(v)}</span>
-      </div>
+        <span class="sret ${up?'pos':'neg'}">${sgn(v)}</span></div>
       <div class="sbar">${up
         ?`<i style="width:${w}%;margin-left:auto;order:2;background:linear-gradient(90deg,#8fe6bd,var(--up))"></i><i style="width:${100-w}%"></i>`
         :`<i style="width:${w}%;background:linear-gradient(90deg,var(--dn),#f6a9ba)"></i>`}</div>
     </div>`;}).join("");
 }
 
-/* ── Chupa Rustam: VCP recos with Entry / SL / trigger date ── */
-async function loadVCP(){
-  const d0=await latestDate("scanner_vcp");
-  const { data:raw } = await sb.from("scanner_vcp").select("*").eq("run_date",d0).order("range_15d_pct");
-  const el=document.getElementById("l-vcp");
-  document.getElementById("vcp-date").textContent="📅 trigger "+dt(d0);
-  const data=(raw||[]).filter(r=>fno.has(r.symbol));
-  if(!data.length){ el.innerHTML='<div class="empty">Aaj koi Rustam nahi mila 🤷</div>'; return 0; }
-  el.innerHTML=data.map(r=>{
-    const entry=+r.high_15d, slv=+r.low_15d;
-    const risk=entry>0?((entry-slv)/entry*100):null;
-    return `<div class="row" data-sym="${r.symbol}">
+/* ── merge helper: one entry per symbol, best score wins, +8 per extra scanner ── */
+function mergeIdeas(cands){
+  const by={};
+  cands.forEach(c=>{
+    const e=(by[c.sym] ||= { sym:c.sym, score:0, badges:[], details:[] });
+    e.score=Math.max(e.score,c.score);
+    e.badges.push(c.badge);
+    e.details.push(c.detail);
+  });
+  const list=Object.values(by);
+  list.forEach(e=>{ e.score=Math.min(99,Math.round(e.score+8*(e.badges.length-1))); });
+  list.sort((a,b)=>b.score-a.score);
+  return list;
+}
+function renderRanked(el, list, dir){
+  if(!list.length){ el.innerHTML='<div class="empty">Aaj koi idea nahi 🤷</div>'; return; }
+  el.classList.remove("empty");
+  el.innerHTML=list.map((e,i)=>{
+    const medal=i===0?"🏆":i===1?"🥈":i===2?"🥉":"#"+(i+1);
+    return `<div class="row" data-sym="${e.sym}">
       <div class="r1">
-        <span class="sym">${r.symbol}</span>
-        <span class="tag pink">${fmt(r.range_15d_pct,1)}% TIGHT</span>
-        <span class="big pos">+${fmt(r.return_3m,0)}% 3M</span>
+        <span class="rank ${i<3?'top':''}">${medal}</span>
+        <span class="sym">${e.sym}</span>
+        <span class="badges">${e.badges.map(b=>`<span class="bdg">${b}</span>`).join("")}</span>
+        <span class="josh ${dir}">${e.score}</span>
       </div>
-      <div class="trade">
-        <div class="tbox entry"><div class="k">🎯 Entry ></div><div class="v">${fmt(entry,1)}</div></div>
-        <div class="tbox sl"><div class="k">🛑 Bachao (SL)</div><div class="v">${fmt(slv,1)}</div></div>
-        <div class="tbox risk"><div class="k">⚖️ Risk</div><div class="v">${fmt(risk,1)}%</div></div>
-      </div>
-      <div class="r3">📅 <b>${dt(d0)}</b> · abhi <b>${fmt(r.close,1)}</b> pe hai · 15-din ka dayra ${fmt(slv,1)} – ${fmt(entry,1)}</div>
+      <div class="r2">${e.details.join("<br>")}</div>
     </div>`;}).join("");
-  return data.length;
 }
 
-/* ── Rocket Singh: 10% movers with trigger / target / SL / trigger date ── */
-async function loadMove(){
-  const { data } = await sb.from("scanner_move_alerts").select("*")
-    .order("run_date",{ascending:false}).order("score",{ascending:false}).limit(500);
-  const el=document.getElementById("l-move");
-  if(!data||!data.length){ el.innerHTML='<div class="empty">Launchpad khaali hai 🚀</div>'; return 0; }
-  const latest=data[0].run_date;
-  document.getElementById("move-date").textContent="📅 trigger "+dt(latest);
-  const rows=data.filter(r=>r.run_date===latest && fno.has(r.symbol));
-  if(!rows.length){ el.innerHTML='<div class="empty">Aaj F&O mein koi rocket nahi 🤷</div>'; return 0; }
-  el.innerHTML=rows.map(r=>`<div class="row" data-sym="${r.symbol}">
-      <div class="r1">
-        <span class="sym">${r.symbol}</span>
-        <span class="tag ${r.tier==='READY'?'gold':'dim'}">${r.tier==='READY'?'🔥 READY':r.tier}</span>
-        <span class="big amb">${r.score}</span>
-        <span class="big ${cls(r.chg_pct)}">${sgn(r.chg_pct)}</span>
-      </div>
-      <div class="trade">
-        <div class="tbox entry"><div class="k">🎯 Entry ></div><div class="v">${fmt(r.trigger_price,1)}</div></div>
-        <div class="tbox tgt"><div class="k">💰 Jackpot</div><div class="v">${fmt(r.target_price,1)}</div></div>
-        <div class="tbox sl"><div class="k">🛑 Bachao (SL)</div><div class="v">${fmt(r.stop_price,1)}</div></div>
-      </div>
-      <div class="r3">📅 <b>${dt(r.run_date)}</b> · abhi <b>${fmt(r.close,1)}</b> · rvol <b>${fmt(r.rvol,1)}×</b> · ATR ${fmt(r.atr_typ_pct,1)}%</div>
-    </div>`).join("");
-  return rows.length;
-}
-
-/* ── Mandi Master: short calls — fresh breakdowns + bearish EPs ── */
-async function loadShort(){
-  const bdEl=document.getElementById("l-bd"), epEl=document.getElementById("l-bep");
-  // 1) fresh 6M/1Y/2Y breakdowns (F&O) — short below close, rule-based +4% SL / −8% jackpot
-  const d0=await latestDate("scanner_breakouts");
-  document.getElementById("short-date").textContent="📅 trigger "+dt(d0);
-  const { data:bd } = await sb.from("scanner_breakouts").select("*").eq("run_date",d0)
-    .like("breakout_type","%LOW").order("change_pct",{ascending:true});
-  const bdr=(bd||[]).filter(r=>fno.has(r.symbol));
-  bdEl.classList.remove("empty");
-  bdEl.innerHTML = bdr.length ? bdr.map(r=>{
-    const c=+r.close, sl=c*1.04, tgt=c*0.92;
-    return `<div class="row" data-sym="${r.symbol}">
-      <div class="r1">
-        <span class="sym">${r.symbol}</span>
-        <span class="tag bear">${r.breakout_type.replace("_"," ")}</span>
-        <span class="big ${cls(r.change_pct)}">${sgn(r.change_pct)}</span>
-      </div>
-      <div class="trade">
-        <div class="tbox entry"><div class="k">🎯 Short <</div><div class="v">${fmt(c,1)}</div></div>
-        <div class="tbox sl"><div class="k">🛑 Bachao (+4%)</div><div class="v">${fmt(sl,1)}</div></div>
-        <div class="tbox tgt"><div class="k">💰 Jackpot (−8%)</div><div class="v">${fmt(tgt,1)}</div></div>
-      </div>
-      <div class="r3">📅 <b>${dt(r.run_date)}</b> · pehli baar iss level pe toota — continuation nahi</div>
-    </div>`;}).join("") : '<div class="empty" style="padding:1rem">Aaj koi naya breakdown nahi 🤷</div>';
-
-  // 2) bearish EPs from the last 60 days — short while it stays below the pivot close
+/* ── Tezi Toppers: VCP + 10% move + bull EP + snapback, ranked ── */
+async function loadTezi(){
   const since=new Date(Date.now()-60*864e5).toISOString().slice(0,10);
-  const { data:ep } = await sb.from("scanner_ep").select("*").eq("ep_type","BEARISH")
-    .gte("run_date",since).order("return_since_pivot",{ascending:true}).limit(120);
-  const epr=(ep||[]).filter(r=>fno.has(r.symbol)).slice(0,30);
-  epEl.classList.remove("empty");
-  epEl.innerHTML = epr.length ? epr.map(r=>`<div class="row" data-sym="${r.symbol}">
-      <div class="r1">
-        <span class="sym">${r.symbol}</span>
-        <span class="tag bear">BEAR EP</span>
-        <span class="big ${cls(r.return_since_pivot)}">${sgn(r.return_since_pivot)}</span>
-      </div>
-      <div class="trade">
-        <div class="tbox entry"><div class="k">🎯 Short <</div><div class="v">${fmt(r.last_close,1)}</div></div>
-        <div class="tbox sl"><div class="k">🛑 Bachao (pivot)</div><div class="v">${fmt(r.close,1)}</div></div>
-        <div class="tbox risk"><div class="k">⚡ Vol</div><div class="v">${fmt(r.vol_ratio,1)}×</div></div>
-      </div>
-      <div class="r3">📅 pivot <b>${dt(r.run_date)}</b> @${fmt(r.close,1)} · gap ${sgn(r.gap_pct)} · pivot ke upar band = exit</div>
-    </div>`).join("") : '<div class="empty" style="padding:1rem">Koi bear EP nahi mila 🤷</div>';
-  return bdr.length+epr.length;
+  const [mv, vcpD] = await Promise.all([
+    sb.from("scanner_move_alerts").select("*").order("run_date",{ascending:false}).order("score",{ascending:false}).limit(500),
+    latestDate("scanner_vcp"),
+  ]);
+  const [vcp, ep, snp] = await Promise.all([
+    sb.from("scanner_vcp").select("*").eq("run_date",vcpD),
+    sb.from("scanner_ep").select("*").eq("ep_type","BULLISH").gte("run_date",since).limit(200),
+    sb.from("scanner_snapback").select("*"),
+  ]);
+  const mvLatest=mv.data?.[0]?.run_date;
+  document.getElementById("tezi-date").textContent="📅 "+dt(mvLatest);
+  const cands=[];
+  (mv.data||[]).filter(r=>r.run_date===mvLatest&&fno.has(r.symbol)).forEach(r=>cands.push({
+    sym:r.symbol, badge:"🚀", score:+r.score,
+    detail:`🚀 10% move · josh <b>${r.score}</b>${r.tier==='READY'?' · 🔥READY':''} · rvol <b>${fmt(r.rvol,1)}×</b> · <span class="${cls(r.chg_pct)}">${sgn(r.chg_pct)}</span> aaj`}));
+  (vcp.data||[]).filter(r=>fno.has(r.symbol)).forEach(r=>cands.push({
+    sym:r.symbol, badge:"🕵️", score:45+Math.max(0,15-+r.range_15d_pct)*2+Math.min(+r.return_3m,60)/6,
+    detail:`🕵️ VCP · <b>${fmt(r.range_15d_pct,1)}%</b> tight · <span class="pos">+${fmt(r.return_3m,0)}%</span> 3M · band ${fmt(r.low_15d,1)}–${fmt(r.high_15d,1)}`}));
+  (ep.data||[]).filter(r=>fno.has(r.symbol)).forEach(r=>cands.push({
+    sym:r.symbol, badge:"⚡", score:40+Math.min(Math.max(+r.return_since_pivot,0),50)*0.8,
+    detail:`⚡ Bull EP ${dt(r.run_date)} · <span class="${cls(r.return_since_pivot)}">${sgn(r.return_since_pivot)}</span> since pivot · vol ${fmt(r.vol_ratio,1)}×`}));
+  (snp.data||[]).forEach(r=>cands.push({
+    sym:r.symbol, badge:"🪝", score:40+(+r.score||0)*10,
+    detail:`🪝 Snapback · ${r.low_window} low ${dt(r.low_date)} reclaimed · <span class="${cls(r.pct_off_low)}">${sgn(r.pct_off_low)}</span> off low · ★${r.score}/4`}));
+  const list=mergeIdeas(cands).slice(0,40);
+  renderRanked(document.getElementById("l-tezi"), list, "up");
+  return list.length;
+}
+
+/* ── Mandi Masters: fresh breakdowns + bear EPs, ranked ── */
+async function loadMandi(){
+  const since=new Date(Date.now()-60*864e5).toISOString().slice(0,10);
+  const d0=await latestDate("scanner_breakouts");
+  document.getElementById("mandi-date").textContent="📅 "+dt(d0);
+  const [bd, ep] = await Promise.all([
+    sb.from("scanner_breakouts").select("*").eq("run_date",d0).like("breakout_type","%LOW"),
+    sb.from("scanner_ep").select("*").eq("ep_type","BEARISH").gte("run_date",since).limit(200),
+  ]);
+  const winScore={ "2Y":85, "1Y":75, "6M":65 };
+  const cands=[];
+  (bd.data||[]).filter(r=>fno.has(r.symbol)).forEach(r=>{
+    const win=r.breakout_type.split("_")[0];
+    cands.push({ sym:r.symbol, badge:"💣", score:(winScore[win]||60)+Math.min(Math.abs(+r.change_pct||0),10),
+      detail:`💣 Fresh <b>${win} low</b> ${dt(r.run_date)} · <span class="${cls(r.change_pct)}">${sgn(r.change_pct)}</span> us din · pehli baar toota`});
+  });
+  (ep.data||[]).filter(r=>fno.has(r.symbol)).forEach(r=>cands.push({
+    sym:r.symbol, badge:"📉", score:45+Math.min(Math.abs(Math.min(+r.return_since_pivot,0)),50)*0.8,
+    detail:`📉 Bear EP ${dt(r.run_date)} @${fmt(r.close,1)} · <span class="${cls(r.return_since_pivot)}">${sgn(r.return_since_pivot)}</span> since pivot · gap ${sgn(r.gap_pct)}`}));
+  const list=mergeIdeas(cands).slice(0,40);
+  renderRanked(document.getElementById("l-mandi"), list, "dn");
+  return list.length;
 }
 
 async function boot(){
@@ -411,8 +367,8 @@ async function boot(){
   stat.innerHTML="reel ghoom rahi hai… 🎞️";
   try{
     if(!fno) await loadFno();
-    const [,,v,m,s]=await Promise.all([loadMood(),loadSectors(),loadVCP(),loadMove(),loadShort()]);
-    stat.innerHTML=`<span class="ok">● superhit</span> · Rustam ${v} · Rocket ${m} · Mandi ${s} · `+
+    const [,,t,m]=await Promise.all([loadMood(),loadSectors(),loadTezi(),loadMandi()]);
+    stat.innerHTML=`<span class="ok">● superhit</span> · Tezi ${t} · Mandi ${m} · `+
       new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
   }catch(e){
     stat.innerHTML=`⚠ interval ho gaya — ${String(e).slice(0,60)}`;
