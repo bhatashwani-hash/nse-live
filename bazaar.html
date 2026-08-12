@@ -57,7 +57,10 @@
   .mood.mandi::before{ background:linear-gradient(90deg,var(--dn),#fb7185); }
   .mood.savdhaan::before{ background:linear-gradient(90deg,#f59e0b,#fbbf24); }
   .mood-top{ display:flex; align-items:baseline; gap:.7rem; }
-  .mood-idx{ font-size:.68rem; font-weight:700; letter-spacing:1.2px; color:var(--faint); text-transform:uppercase; }
+  .mood-idx{ font-size:.72rem; font-weight:800; letter-spacing:1.2px; text-transform:uppercase; }
+  .mood.tezi .mood-idx{ color:var(--up); }
+  .mood.mandi .mood-idx{ color:var(--dn); }
+  .mood.savdhaan .mood-idx{ color:#d97706; }
   .mood-px{ margin-left:auto; text-align:right; flex:0 0 auto; display:flex; align-items:baseline; gap:.55rem; }
   .mood-px .v{ font-family:var(--mono); font-size:1.65rem; font-weight:700; letter-spacing:-.8px; }
   .mood-px .c{ font-family:var(--mono); font-size:.82rem; font-weight:700; }
@@ -174,7 +177,7 @@
   <div class="pane" id="p-mandi">
     <div class="runline">🐻 Mandi Masters — ranked short ideas <span class="pill" id="mandi-date">📅 —</span></div>
     <div id="l-mandi" class="empty">Loading…</div>
-    <div class="disclaimer">💣 Fresh breakdown · 🩸 Bear VCP (badi girawat on volume → tight contraction → falling 20DMA ko touch) · top-500 market cap — shorting risky hai boss 🙏</div>
+    <div class="disclaimer">💣 fresh breakdown · 🩸 badi girawat on volume → tight contraction → falling 20DMA ko touch · top-500 market cap — shorting risky hai boss 🙏</div>
   </div>
 </main>
 
@@ -252,8 +255,6 @@ async function loadMood(){
       `<span class="ma ${above(n)?'a':'b'}">${above(n)?'▲':'▼'} ${n}D</span>`).join("")}</div>
     <div class="gita">
       <div class="sa">${g.sa}</div>
-      <div class="en">${g.en}</div>
-      <div class="ref">${g.ref}</div>
     </div>`;
 }
 
@@ -368,7 +369,7 @@ async function loadMandi(){
   (bv.data||[]).filter(r=>uni.has(r.symbol)).forEach(r=>cands.push({
     sym:r.symbol,
     score:50+Math.min(Math.abs(+r.fall_3m_pct),60)/3+Math.max(0,15-+r.range_15d_pct)*1.5+(r.touching?8:0),
-    detail:`🩸 Bear VCP · <span class="neg">${sgn(r.fall_3m_pct,0)}</span> 3M girawat (vol <b>${fmt(r.fall_volx,1)}×</b>) · `+
+    detail:`🩸 <span class="neg">${sgn(r.fall_3m_pct,0)}</span> 3M girawat (vol <b>${fmt(r.fall_volx,1)}×</b>) · `+
       `15d sirf <b>${fmt(r.range_15d_pct,1)}%</b> tight · 20DMA ↓ @${fmt(r.sma20,1)}${r.touching?' · <b>chhoo raha hai</b>':''}`}));
   const list=mergeIdeas(cands).slice(0,40);
   const el=document.getElementById("l-mandi");
